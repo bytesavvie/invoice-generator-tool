@@ -31,6 +31,7 @@ const Dashboard: NextPage = () => {
 
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [students, setStudents] = useState<Student[]>([]);
 
   const handleEditStudentClick = (student: Student) => {
     setSelectedStudent(student);
@@ -48,8 +49,8 @@ const Dashboard: NextPage = () => {
 
   const handleGetStudents = async () => {
     try {
-      const { data } = await axios.get('/api/students');
-      console.log(data);
+      const { data } = await axios.get<Student[]>('/api/students');
+      setStudents(data);
     } catch (err) {
       console.log(err);
     }
@@ -114,7 +115,7 @@ const Dashboard: NextPage = () => {
             showModal={showStudentModal}
             selectedStudent={selectedStudent}
           />
-          <StudentTable handleEditStudentClick={handleEditStudentClick} />
+          <StudentTable handleEditStudentClick={handleEditStudentClick} studentData={students} />
         </Box>
       </Container>
     </div>

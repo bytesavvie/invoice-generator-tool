@@ -16,28 +16,13 @@ import IconButton from '@mui/material/IconButton';
 // Types
 import { Student } from '../types/customTypes';
 
-const students: Student[] = [
-  {
-    name: 'Mark Mulligan',
-    parentName: 'Carol Mulligan',
-    parentEmail: 'carolmulligan@gmail.com',
-    parentPhone: '817-660-6011',
-    lessonAmount: 24,
-  },
-  {
-    name: 'Another Student',
-    parentName: 'Another Parent',
-    parentEmail: 'parent@gmail.com',
-    parentPhone: '897-343-9010',
-    lessonAmount: 22,
-  },
-];
-
 interface IProps {
   handleEditStudentClick: (student: Student) => void;
+  studentData: Student[];
 }
 
-const StudentTable: FC<IProps> = ({ handleEditStudentClick }) => {
+const StudentTable: FC<IProps> = ({ handleEditStudentClick, studentData }) => {
+  console.log('studentData', studentData);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -52,7 +37,7 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {students.map((student) => (
+          {studentData.map((student) => (
             <TableRow key={student.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
                 {student.name}

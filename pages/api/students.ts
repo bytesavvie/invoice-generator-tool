@@ -30,14 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
       students.push(studentData);
     });
-    //let usersRef = collection(db, 'users');
-    // const docRef = doc(usersRef, session.user.id);
-    // let result = (await getDoc(docRef)).data();
 
-    // const result = await db.collection('users').doc(session.user.id).get();
-    // console.log('result', students);
-
-    res.status(200).json({ students });
+    res.status(200).json(students);
     return;
   }
 
@@ -52,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     try {
       const studentCollectionRef = collection(db, 'students');
       let docRef = await addDoc(studentCollectionRef, { ...studentInfo, userId: session.user.id });
-      res.status(201).json({ student: { ...studentInfo, id: docRef.id } });
+      res.status(201).json({ ...studentInfo, id: docRef.id });
       return;
     } catch (err) {
       res.status(500).json({ message: 'There was an error saving the student.' });

@@ -58,7 +58,7 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
   };
 
   const handleAddStudent = async () => {
-    let student: Student = {
+    let student = {
       name,
       parentName,
       parentEmail,

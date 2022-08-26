@@ -1,6 +1,9 @@
 // React
 import React, { FC, useState, useEffect } from 'react';
 
+// libraries
+import axios from 'axios';
+
 // MUI
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
@@ -35,37 +38,57 @@ interface IProps {
 }
 
 const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
-  const [studentName, setStudentName] = useState('');
+  const [name, setName] = useState('');
   const [parentName, setParentName] = useState('');
   const [parentEmail, setParentEmail] = useState('');
   const [parentPhone, setParentPhone] = useState('');
-  const [lessonRate, setLessonRate] = useState('24');
+  const [lessonAmount, setLessonAmount] = useState('24');
 
   const handleCancel = (e: React.MouseEvent) => {
     e.preventDefault();
     onClose();
   };
 
-  const handleAddStudent = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(studentName, parentName, parentEmail, parentPhone, lessonRate);
+    if (!selectedStudent) {
+      handleAddStudent();
+    }
+  };
+
+  const handleAddStudent = async () => {
+    let student: Student = {
+      name,
+      parentName,
+      parentEmail,
+      parentPhone,
+      lessonAmount: Number(lessonAmount),
+    };
+
+    try {
+      let result = await axios.post('/api/students', { student });
+      console.log('result', result.data);
+    } catch (err) {
+      console.log(err);
+    }
+
     onClose();
   };
 
   useEffect(() => {
     if (selectedStudent) {
-      setStudentName(selectedStudent.name);
+      setName(selectedStudent.name);
       setParentName(selectedStudent.parentName);
       setParentEmail(selectedStudent.parentEmail);
       setParentPhone(selectedStudent.parentPhone);
-      setLessonRate(selectedStudent.lessonAmount.toString());
+      setLessonAmount(selectedStudent.lessonAmount.toString());
     } else {
-      setStudentName('');
+      setName('');
       setParentName('');
       setParentEmail('');
       setParentPhone('');
-      setLessonRate('24');
+      setLessonAmount('24');
     }
   }, [selectedStudent]);
 
@@ -76,7 +99,7 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <form onSubmit={handleAddStudent}>
+      <form onSubmit={handleFormSubmit}>
         <Box sx={modalStyle}>
           <Typography variant="h4" align="center" sx={{ marginBottom: '2rem' }}>
             {selectedStudent ? 'Edit Student' : 'Add Student'}
@@ -86,8 +109,8 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
             label="Student Name"
             variant="outlined"
             size="small"
-            value={studentName}
-            onChange={(e) => setStudentName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             fullWidth
             required
             sx={{ marginBottom: '1.4rem' }}
@@ -128,8 +151,8 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
             <InputLabel htmlFor="outlined-adornment-amount">Lesson Amount</InputLabel>
             <OutlinedInput
               id="outlined-adornment-amount"
-              value={lessonRate}
-              onChange={(e) => setLessonRate(e.target.value)}
+              value={lessonAmount}
+              onChange={(e) => setLessonAmount(e.target.value)}
               type="number"
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
               label="Lesson Amount"

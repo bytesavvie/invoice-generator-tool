@@ -62,8 +62,8 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick }) => {
               <TableCell>{student.parentPhone}</TableCell>
               <TableCell align="right">{student.lessonAmount}</TableCell>
               <TableCell align="right">
-                <IconButton sx={{ marginRight: '20px' }}>
-                  <EditIcon onClick={() => handleEditStudentClick(student)} />
+                <IconButton sx={{ marginRight: '20px' }} onClick={() => handleEditStudentClick(student)}>
+                  <EditIcon />
                 </IconButton>
                 <IconButton>
                   <DeleteIcon />

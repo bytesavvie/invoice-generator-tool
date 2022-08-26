@@ -1,5 +1,5 @@
 // React
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // Next
 import Head from 'next/head';
@@ -54,6 +54,10 @@ const Dashboard: NextPage = () => {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    handleGetStudents();
+  }, []);
 
   if (status === 'loading') {
     return <div>Loading</div>;

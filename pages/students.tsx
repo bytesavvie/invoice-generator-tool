@@ -8,9 +8,14 @@ import { useSession } from 'next-auth/react';
 
 // MUI
 import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
 // Components
 import Navbar from '../components/Navbar';
+import StudentTable from '../components/StudentTable';
+import TextField from '@mui/material/TextField';
 
 const Dashboard: NextPage = () => {
   const { status } = useSession({ required: true });
@@ -36,7 +41,16 @@ const Dashboard: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <Typography variant="h1">Students</Typography>
+      <Container sx={{ paddingTop: '50px' }}>
+        <Typography variant="h1" sx={{ fontSize: '2.2rem', marginBottom: '1rem' }}>
+          Students
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+          <TextField id="outlined-basic" label="Search" variant="outlined" size="small" />
+          <Button variant="contained">Add Student</Button>
+        </Box>
+        <StudentTable />
+      </Container>
     </div>
   );
 };

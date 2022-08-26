@@ -1,3 +1,6 @@
+// React
+import { useState } from 'react';
+
 // Next
 import Head from 'next/head';
 import type { NextPage } from 'next';
@@ -11,14 +14,37 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
 
 // Components
 import Navbar from '../components/Navbar';
 import StudentTable from '../components/StudentTable';
-import TextField from '@mui/material/TextField';
+import StudentModal from '../components/StudentModal';
+
+// Types
+import { Student } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
   const { status } = useSession({ required: true });
+
+  const [showStudentModal, setShowStudentModal] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+  const handleEditStudentClick = (student: Student) => {
+    setSelectedStudent(student);
+    setShowStudentModal(true);
+  };
+
+  const handleAddStudentClick = () => {
+    setSelectedStudent(null);
+    setShowStudentModal(true);
+  };
+
+  const handleStudentModalClose = () => {
+    setShowStudentModal(false);
+  };
 
   const handleGetStudents = async () => {
     try {
@@ -41,15 +67,51 @@ const Dashboard: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <Container sx={{ paddingTop: '50px' }}>
-        <Typography variant="h1" sx={{ fontSize: '2.2rem', marginBottom: '1rem' }}>
-          Students
+      <Container sx={{ paddingTop: '30px' }}>
+        <Typography variant="h1" sx={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
+          Dashboard
         </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-          <TextField id="outlined-basic" label="Search" variant="outlined" size="small" />
-          <Button variant="contained">Add Student</Button>
+        <Box component="section" sx={{ marginBottom: '2rem' }}>
+          <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '1rem' }}>
+            Your Info
+          </Typography>
+          <Paper sx={{ padding: '20px' }}>
+            <Grid container spacing={4} sx={{ marginBottom: '1rem' }}>
+              <Grid item xs={4}>
+                <TextField fullWidth id="outlined-basic" label="Name" variant="outlined" size="small" />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField fullWidth id="outlined-basic" label="Email" variant="outlined" size="small" />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField fullWidth id="outlined-basic" label="Phone Number" variant="outlined" size="small" />
+              </Grid>
+            </Grid>
+
+            <Box sx={{ textAlign: 'center' }}>
+              <Button variant="contained">Save Changes</Button>
+            </Box>
+          </Paper>
         </Box>
-        <StudentTable />
+
+        <Box component="section">
+          <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '1rem' }}>
+            Students
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+            <TextField id="outlined-basic" label="Search" variant="outlined" size="small" />
+            <Button variant="contained" onClick={() => handleAddStudentClick()}>
+              Add Student
+            </Button>
+          </Box>
+
+          <StudentModal
+            onClose={handleStudentModalClose}
+            showModal={showStudentModal}
+            selectedStudent={selectedStudent}
+          />
+          <StudentTable handleEditStudentClick={handleEditStudentClick} />
+        </Box>
       </Container>
     </div>
   );

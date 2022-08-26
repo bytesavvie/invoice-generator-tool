@@ -1,3 +1,6 @@
+// React
+import { FC } from 'react';
+
 // MUI
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -6,8 +9,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import IconButton from '@mui/material/IconButton';
 
-const students = [
+// Types
+import { Student } from '../types/customTypes';
+
+const students: Student[] = [
   {
     name: 'Mark Mulligan',
     parentName: 'Carol Mulligan',
@@ -24,7 +33,11 @@ const students = [
   },
 ];
 
-const StudentTable = () => {
+interface IProps {
+  handleEditStudentClick: (student: Student) => void;
+}
+
+const StudentTable: FC<IProps> = ({ handleEditStudentClick }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -35,6 +48,7 @@ const StudentTable = () => {
             <TableCell>Parent Email</TableCell>
             <TableCell>Parent Phone</TableCell>
             <TableCell align="right">Lesson Amount</TableCell>
+            <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -47,6 +61,14 @@ const StudentTable = () => {
               <TableCell>{student.parentEmail}</TableCell>
               <TableCell>{student.parentPhone}</TableCell>
               <TableCell align="right">{student.lessonAmount}</TableCell>
+              <TableCell align="right">
+                <IconButton sx={{ marginRight: '20px' }}>
+                  <EditIcon onClick={() => handleEditStudentClick(student)} />
+                </IconButton>
+                <IconButton>
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

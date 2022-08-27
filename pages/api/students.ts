@@ -2,7 +2,7 @@ import { db } from '../../firebase';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { authOptions } from './auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth/next';
-import { collection, getDoc, doc, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDoc, doc, addDoc, getDocs, query, where, deleteDoc } from 'firebase/firestore';
 
 interface Error {
   message: string;
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   if (req.method === 'POST') {
-    if (!req.body?.student) {
+    if (!req?.body?.student) {
       res.status(400).json({ message: 'bad request' });
       return;
     }
@@ -47,10 +47,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const studentCollectionRef = collection(db, 'students');
       let docRef = await addDoc(studentCollectionRef, { ...studentInfo, userId: session.user.id });
       res.status(201).json({ ...studentInfo, id: docRef.id });
-      return;
     } catch (err) {
       res.status(500).json({ message: 'There was an error saving the student.' });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    if (!req.query || !req.query.id) {
+      res.status(400).json({ message: 'bad request' });
       return;
+    }
+
+    let studentId = req.query.id as string;
+    console.log('studentId', studentId);
+    const docRef = doc(db, 'students', studentId);
+
+    try {
+      await deleteDoc(docRef);
+      res.status(200).json({ message: 'student deleted.' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'There was an error deleting the student.' });
     }
   }
 }

@@ -18,10 +18,11 @@ import { Student } from '../types/customTypes';
 
 interface IProps {
   handleEditStudentClick: (student: Student) => void;
+  handleDeleteStudentClick: (student: Student) => void;
   studentData: Student[];
 }
 
-const StudentTable: FC<IProps> = ({ handleEditStudentClick, studentData }) => {
+const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentClick, studentData }) => {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -49,7 +50,7 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, studentData }) => {
                 <IconButton sx={{ marginRight: '20px' }} onClick={() => handleEditStudentClick(student)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton>
+                <IconButton onClick={() => handleDeleteStudentClick(student)}>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>

@@ -22,6 +22,7 @@ import TextField from '@mui/material/TextField';
 import Navbar from '../components/Navbar';
 import StudentTable from '../components/StudentTable';
 import StudentModal from '../components/StudentModal';
+import ConfirmModal from '../components/ConfirmModal';
 
 // Context
 import { AppContext } from '../context';
@@ -35,6 +36,7 @@ const Dashboard: NextPage = () => {
 
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const handleEditStudentClick = (student: Student) => {
     setSelectedStudent(student);
@@ -46,8 +48,35 @@ const Dashboard: NextPage = () => {
     setShowStudentModal(true);
   };
 
+  const handleDeleteStudentClick = (student: Student) => {
+    setSelectedStudent(student);
+    setShowConfirmModal(true);
+  };
+
   const handleStudentModalClose = () => {
     setShowStudentModal(false);
+  };
+
+  const handleDeleteStudent = async () => {
+    if (!selectedStudent) {
+      return;
+    }
+
+    try {
+      await axios.delete(`/api/students?id=${selectedStudent.id}`);
+      const updatedStudents: Student[] = [];
+      students.forEach((student) => {
+        if (student.id !== selectedStudent.id) {
+          updatedStudents.push(student);
+        }
+      });
+
+      setStudents(updatedStudents);
+    } catch (err) {
+      console.log(err);
+    }
+
+    setShowConfirmModal(false);
   };
 
   const handleGetStudents = useCallback(async () => {
@@ -118,7 +147,19 @@ const Dashboard: NextPage = () => {
             showModal={showStudentModal}
             selectedStudent={selectedStudent}
           />
-          <StudentTable handleEditStudentClick={handleEditStudentClick} studentData={students} />
+          <StudentTable
+            handleEditStudentClick={handleEditStudentClick}
+            studentData={students}
+            handleDeleteStudentClick={handleDeleteStudentClick}
+          />
+          <ConfirmModal
+            modalTitle="Delete Student?"
+            modalMessage={`Are you sure you want to the delete the student ${selectedStudent?.name || ''}?`}
+            showModal={showConfirmModal}
+            onClose={() => setShowConfirmModal(false)}
+            confirmText="Delete Student"
+            onConfirm={() => handleDeleteStudent()}
+          />
         </Box>
       </Container>
     </div>

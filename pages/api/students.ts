@@ -2,7 +2,7 @@ import { db } from '../../firebase';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { authOptions } from './auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth/next';
-import { collection, getDoc, doc, addDoc, getDocs, query, where, deleteDoc } from 'firebase/firestore';
+import { collection, getDoc, doc, addDoc, getDocs, query, where, deleteDoc, updateDoc } from 'firebase/firestore';
 
 interface Error {
   message: string;
@@ -49,6 +49,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       res.status(201).json({ ...studentInfo, id: docRef.id });
     } catch (err) {
       res.status(500).json({ message: 'There was an error saving the student.' });
+    }
+  }
+
+  if (req.method === 'PUT') {
+    if (!req?.body?.student) {
+      res.status(400).json({ message: 'bad request' });
+      return;
+    }
+
+    const studentId = req.body.student.id;
+    const studentInfo = { ...req.body.student };
+    delete studentInfo.id;
+    const docRef = doc(db, 'students', studentId);
+
+    try {
+      await updateDoc(docRef, studentInfo);
+      res.status(204).json({ message: 'Student information updated.' });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: `There was an error updating the student's infromation` });
     }
   }
 

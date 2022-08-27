@@ -59,6 +59,46 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
 
     if (!selectedStudent) {
       handleAddStudent();
+    } else {
+      handleEditStudent();
+    }
+  };
+
+  const handleEditStudent = async () => {
+    if (!selectedStudent) {
+      return;
+    }
+
+    const student = {
+      id: selectedStudent.id,
+      name,
+      parentName,
+      parentEmail,
+      parentPhone,
+      lessonAmount: Number(lessonAmount),
+    };
+
+    try {
+      await axios.put('/api/students', { student });
+      let indexOfStudent = 0;
+
+      for (let i = 0; i < students.length; i++) {
+        if (students[i].id === student.id) {
+          indexOfStudent = i;
+        }
+      }
+
+      let studentsArrCopy = [...students];
+      studentsArrCopy[indexOfStudent].name = name;
+      studentsArrCopy[indexOfStudent].parentName = parentName;
+      studentsArrCopy[indexOfStudent].parentEmail = name;
+      studentsArrCopy[indexOfStudent].parentPhone = parentPhone;
+      studentsArrCopy[indexOfStudent].lessonAmount = Number(lessonAmount);
+
+      setStudents(studentsArrCopy);
+      onClose();
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -72,14 +112,13 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
     };
 
     try {
-      let { data } = await axios.post('/api/students', { student });
+      const { data } = await axios.post('/api/students', { student });
       console.log('new student', data);
       setStudents([...students, { ...data }]);
+      onClose();
     } catch (err) {
       console.log(err);
     }
-
-    onClose();
   };
 
   useEffect(() => {
@@ -170,7 +209,7 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
               Cancel
             </Button>
             <Button variant="contained" type="submit">
-              Add Student
+              {selectedStudent ? 'Update Student' : 'Add Student'}
             </Button>
           </Box>
         </Box>

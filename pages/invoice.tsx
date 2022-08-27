@@ -1,5 +1,5 @@
 // React
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useCallback } from 'react';
 
 // Next
 import Head from 'next/head';
@@ -39,10 +39,37 @@ const pdfData = {
 };
 
 const Invoice: NextPage = () => {
-  const { status } = useSession({ required: true });
+  const { data: session, status } = useSession({ required: true });
   const { students } = useContext(AppContext);
-  const [lessonDates, setLessonDates] = useState<any>([new Date()]);
+  const [lessonDates, setLessonDates] = useState<any>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+
+  const createPDFData = useCallback(() => {
+    if (!session || !selectedStudent || !lessonDates || !(lessonDates.length > 0)) {
+      return;
+    }
+
+    const lessonDateStrings = lessonDates.map((lessonDate: any) => {
+      return `${lessonDate.month}/${lessonDate.day}/${lessonDate.year}`;
+    });
+
+    let pdfData = {
+      yourName: session.user.name,
+      studentName: selectedStudent.name,
+      parentName: selectedStudent.parentName,
+      parentEmail: selectedStudent.parentEmail,
+      lessonAmount: selectedStudent.lessonAmount,
+      lessonDates: lessonDateStrings,
+    };
+
+    console.log('pdfData', pdfData);
+  }, [session, selectedStudent, lessonDates]);
+
+  useEffect(() => {
+    if (lessonDates && selectedStudent) {
+      createPDFData();
+    }
+  }, [lessonDates, selectedStudent, createPDFData]);
 
   if (status === 'loading') {
     return <div>Loading</div>;

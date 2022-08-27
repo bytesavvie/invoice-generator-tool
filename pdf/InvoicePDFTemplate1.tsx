@@ -10,6 +10,38 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: '#E4E4E4',
   },
+  header: {
+    margin: 15,
+    padding: 15,
+  },
+  invoiceTitle: {
+    color: '#283592',
+    fontFamily: 'Helvetica-Bold',
+    fontSize: 40,
+  },
+  heroSection: {
+    paddingRight: 30,
+    paddingLeft: 30,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  subTitle: {
+    fontFamily: 'Helvetica-Bold',
+    fontSize: 18,
+    marginBottom: 4,
+  },
+  text: {
+    fontFamily: 'Helvetica',
+    marginBottom: 4,
+    fontSize: 16,
+  },
+  divider: {
+    marginTop: 40,
+    marginLeft: 29,
+    marginRight: 29,
+    borderBottom: '1px solid black',
+  },
   name: {
     marginTop: 10,
     marginBottom: 5,
@@ -25,18 +57,10 @@ const styles = StyleSheet.create({
   phone: {
     fontSize: 14,
   },
-  subTitle: {
-    fontSize: 20,
-    marginBottom: 2,
-    color: '#a75e19',
-  },
   size14: {
     fontSize: 14,
   },
-  header: {
-    margin: 15,
-    padding: 15,
-  },
+
   section: {
     margin: 15,
     padding: 15,
@@ -81,35 +105,27 @@ const MyDocument: FC<IProps> = ({ data }) => {
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
-          <Text>Invoice</Text>
-          <Text style={styles.name}>{data.yourName}</Text>
-          <Link style={styles.email} src={`mailto:${data.yourEmail}`}>
-            {data.yourEmail}
-          </Link>
-          <Text style={styles.phone}>{data.yourNumber}</Text>
+          <Text style={styles.invoiceTitle}>Invoice</Text>
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.row}>
-            <View style={styles.col}>
-              <Text style={styles.subTitle}>BILL TO</Text>
-
-              <View style={styles.size14}>
-                <Text style={{ marginBottom: 2 }}>{data?.parentName}</Text>
-                <Link style={styles.email} src={`mailto:${data?.parentEmail}`}>
-                  {data?.parentEmail}
-                </Link>
-              </View>
-            </View>
-            <View style={styles.col}>
-              <Text style={styles.subTitle}>FOR</Text>
-
-              <View style={styles.size14}>
-                <Text style={{ marginBottom: 2 }}>{data.studentName}</Text>
-                <Text>Private Lessons</Text>
-              </View>
-            </View>
+        <View style={styles.heroSection}>
+          <View>
+            <Text style={styles.subTitle}>Invoice For</Text>
+            <Text style={styles.text}>{data.parentName}</Text>
+            <Text style={styles.text}>{data.parentEmail}</Text>
           </View>
+          <View>
+            <Text style={styles.subTitle}>Payable To</Text>
+            <Text style={styles.text}>{data.yourName}</Text>
+          </View>
+          <View>
+            <Text style={styles.subTitle}>Invoice</Text>
+            <Text style={styles.text}>April/May Lessons</Text>
+          </View>
+        </View>
+
+        <View style={styles.divider}>
+          <Text style={styles.text}>{data.studentName}</Text>
         </View>
         <View style={styles.section}>
           <View style={styles.row}>

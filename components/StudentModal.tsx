@@ -1,5 +1,5 @@
 // React
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useContext } from 'react';
 
 // libraries
 import axios from 'axios';
@@ -14,6 +14,9 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
+
+// Context
+import { AppContext } from '../context';
 
 // Types
 import { Student } from '../types/customTypes';
@@ -38,6 +41,8 @@ interface IProps {
 }
 
 const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
+  const { students, setStudents } = useContext(AppContext);
+
   const [name, setName] = useState('');
   const [parentName, setParentName] = useState('');
   const [parentEmail, setParentEmail] = useState('');
@@ -67,8 +72,9 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
     };
 
     try {
-      let result = await axios.post('/api/students', { student });
-      console.log('result', result.data);
+      let { data } = await axios.post('/api/students', { student });
+      console.log('new student', data);
+      setStudents([...students, { ...data }]);
     } catch (err) {
       console.log(err);
     }

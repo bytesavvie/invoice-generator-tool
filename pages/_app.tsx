@@ -3,6 +3,7 @@ import type { AppProps } from 'next/app';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import { SessionProvider } from 'next-auth/react';
+import { AppContextProvider } from '../context';
 
 import createEmotionCache from '../utils/createEmotionCache';
 import darkThemeOptions from '../styles/theme/darkThemeOptions';
@@ -24,7 +25,9 @@ const MyApp: React.FunctionComponent<MyAppProps> = (props) => {
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <SessionProvider session={pageProps.session}>
-          <Component {...pageProps} />
+          <AppContextProvider>
+            <Component {...pageProps} />
+          </AppContextProvider>
         </SessionProvider>
       </ThemeProvider>
     </CacheProvider>

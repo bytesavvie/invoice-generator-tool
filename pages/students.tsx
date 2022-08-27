@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 
 // Next
 import Head from 'next/head';
@@ -23,15 +23,18 @@ import Navbar from '../components/Navbar';
 import StudentTable from '../components/StudentTable';
 import StudentModal from '../components/StudentModal';
 
+// Context
+import { AppContext } from '../context';
+
 // Types
 import { Student } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
   const { status } = useSession({ required: true });
+  const { students, setStudents } = useContext(AppContext);
 
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [students, setStudents] = useState<Student[]>([]);
 
   const handleEditStudentClick = (student: Student) => {
     setSelectedStudent(student);
@@ -47,18 +50,18 @@ const Dashboard: NextPage = () => {
     setShowStudentModal(false);
   };
 
-  const handleGetStudents = async () => {
+  const handleGetStudents = useCallback(async () => {
     try {
       const { data } = await axios.get<Student[]>('/api/students');
       setStudents(data);
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [setStudents]);
 
   useEffect(() => {
     handleGetStudents();
-  }, []);
+  }, [handleGetStudents]);
 
   if (status === 'loading') {
     return <div>Loading</div>;
@@ -72,7 +75,7 @@ const Dashboard: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <Container sx={{ paddingTop: '30px' }}>
+      <Container sx={{ paddingTop: '30px', paddingBottom: '100px' }}>
         <Typography variant="h1" sx={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
           Dashboard
         </Typography>

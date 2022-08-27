@@ -22,7 +22,6 @@ interface IProps {
 }
 
 const StudentTable: FC<IProps> = ({ handleEditStudentClick, studentData }) => {
-  console.log('studentData', studentData);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">

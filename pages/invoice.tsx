@@ -7,12 +7,14 @@ import type { NextPage } from 'next';
 
 // Libraries
 import { useSession } from 'next-auth/react';
+import { PDFViewer } from '@react-pdf/renderer';
 
 // React Multi Date Picker
 import DatePicker from 'react-multi-date-picker';
 
 // MUI
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -22,9 +24,19 @@ import { AppContext } from '../context';
 
 // Components
 import Navbar from '../components/Navbar';
+import InvoicePDFTemplate1 from '../pdf/InvoicePDFTemplate1';
 
 // Types
 import { Student } from '../types/customTypes';
+
+const pdfData = {
+  yourName: 'Mark Mulligan',
+  yourEmail: 'mark.mulligan.jr1@gmail.com',
+  yourNumber: '817-504-5426',
+  studentName: 'Bill Joel',
+  parentName: 'Kevin Joel',
+  parentEmail: 'kevinjoel@gmail.com',
+};
 
 const Invoice: NextPage = () => {
   const { status } = useSession({ required: true });
@@ -72,6 +84,11 @@ const Invoice: NextPage = () => {
             />
           )}
         />
+        <Box sx={{ mt: '50px' }}>
+          <PDFViewer style={{ height: 700, width: '100%' }}>
+            <InvoicePDFTemplate1 data={pdfData} />
+          </PDFViewer>
+        </Box>
       </Container>
     </div>
   );

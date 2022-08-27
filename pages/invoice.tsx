@@ -1,3 +1,6 @@
+// React
+import { useContext, useState, useEffect } from 'react';
+
 // Next
 import Head from 'next/head';
 import type { NextPage } from 'next';
@@ -5,14 +8,29 @@ import type { NextPage } from 'next';
 // Libraries
 import { useSession } from 'next-auth/react';
 
+// React Multi Date Picker
+import DatePicker from 'react-multi-date-picker';
+
 // MUI
 import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
+// Context
+import { AppContext } from '../context';
 
 // Components
 import Navbar from '../components/Navbar';
 
+// Types
+import { Student } from '../types/customTypes';
+
 const Invoice: NextPage = () => {
   const { status } = useSession({ required: true });
+  const { students } = useContext(AppContext);
+  const [lessonDates, setLessonDates] = useState<any>([new Date()]);
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
 
   if (status === 'loading') {
     return <div>Loading</div>;
@@ -26,7 +44,35 @@ const Invoice: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <Typography variant="h1">Invoice</Typography>
+      <Container sx={{ paddingTop: '30px', paddingBottom: '100px' }}>
+        <Autocomplete
+          id="studentSelect"
+          sx={{ width: 300, mb: '1.2rem' }}
+          options={students}
+          value={selectedStudent}
+          onChange={(event: any, newValue: Student | null) => {
+            setSelectedStudent(newValue);
+          }}
+          autoHighlight
+          getOptionLabel={(option) => option.name}
+          renderInput={(params) => <TextField {...params} size="small" label="Select a Student" />}
+        />
+        <DatePicker
+          multiple
+          format="MM/DD/YYYY"
+          value={lessonDates}
+          onChange={setLessonDates}
+          render={(value: any, openCalender: any) => (
+            <TextField
+              sx={{ width: 300 }}
+              value={value}
+              onClick={() => openCalender()}
+              size="small"
+              label="Select Lesson Dates"
+            />
+          )}
+        />
+      </Container>
     </div>
   );
 };

@@ -10,6 +10,10 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: '#fbfbfb',
   },
+  blueTop: {
+    height: 40,
+    backgroundColor: '#283592',
+  },
   header: {
     margin: 15,
     padding: 15,
@@ -114,11 +118,13 @@ const styles = StyleSheet.create({
 interface IProps {
   data: {
     yourName: string;
-    yourEmail: string;
-    yourNumber: string;
     parentName: string;
     parentEmail: string;
     studentName: string;
+    lessonAmount: number;
+    months: string[];
+    lessonDates: string[];
+    totalAmount: number;
   };
 }
 
@@ -127,6 +133,7 @@ const MyDocument: FC<IProps> = ({ data }) => {
   return (
     <Document>
       <Page size="A4" style={styles.page}>
+        <View style={styles.blueTop}></View>
         <View style={styles.header}>
           <Text style={styles.invoiceTitle}>Invoice</Text>
         </View>
@@ -143,7 +150,7 @@ const MyDocument: FC<IProps> = ({ data }) => {
           </View>
           <View>
             <Text style={styles.subTitle}>Invoice</Text>
-            <Text style={styles.text}>April/May Lessons</Text>
+            <Text style={styles.text}>{data.months.join('/')} Lessons</Text>
           </View>
         </View>
 
@@ -163,41 +170,21 @@ const MyDocument: FC<IProps> = ({ data }) => {
           </View>
         </View>
 
-        <View style={styles.gridDark}>
-          <View style={styles.col1}>
-            <Text style={styles.text}>4/6/2022</Text>
-          </View>
-          <View style={styles.col2}>
-            <Text style={styles.text}>1</Text>
-          </View>
-          <View style={styles.col3}>
-            <Text style={styles.text}>$24</Text>
-          </View>
-        </View>
-
-        <View style={styles.gridLight}>
-          <View style={styles.col1}>
-            <Text style={styles.text}>4/6/2022</Text>
-          </View>
-          <View style={styles.col2}>
-            <Text style={styles.text}>1</Text>
-          </View>
-          <View style={styles.col3}>
-            <Text style={styles.text}>$24</Text>
-          </View>
-        </View>
-
-        <View style={styles.gridDark}>
-          <View style={styles.col1}>
-            <Text style={styles.text}>4/6/2022</Text>
-          </View>
-          <View style={styles.col2}>
-            <Text style={styles.text}>1</Text>
-          </View>
-          <View style={styles.col3}>
-            <Text style={styles.text}>$24</Text>
-          </View>
-        </View>
+        {data.lessonDates.map((date, index) => {
+          return (
+            <View key={date} style={index % 2 !== 0 ? styles.gridLight : styles.gridDark}>
+              <View style={styles.col1}>
+                <Text style={styles.text}>{date}</Text>
+              </View>
+              <View style={styles.col2}>
+                <Text style={styles.text}>{index + 1}</Text>
+              </View>
+              <View style={styles.col3}>
+                <Text style={styles.text}>${data.lessonAmount}</Text>
+              </View>
+            </View>
+          );
+        })}
 
         <View style={styles.divider}></View>
         <View style={styles.totalPriceRow}>
@@ -205,7 +192,7 @@ const MyDocument: FC<IProps> = ({ data }) => {
             <Text style={styles.totalPriceLabel}>Total Price</Text>
           </View>
           <View>
-            <Text style={styles.totalPrice}>$100</Text>
+            <Text style={styles.totalPrice}>${data.totalAmount}</Text>
           </View>
         </View>
       </Page>

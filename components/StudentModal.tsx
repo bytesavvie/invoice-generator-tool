@@ -91,7 +91,7 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
       let studentsArrCopy = [...students];
       studentsArrCopy[indexOfStudent].name = name;
       studentsArrCopy[indexOfStudent].parentName = parentName;
-      studentsArrCopy[indexOfStudent].parentEmail = name;
+      studentsArrCopy[indexOfStudent].parentEmail = parentEmail;
       studentsArrCopy[indexOfStudent].parentPhone = parentPhone;
       studentsArrCopy[indexOfStudent].lessonAmount = Number(lessonAmount);
 

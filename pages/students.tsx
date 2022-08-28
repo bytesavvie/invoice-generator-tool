@@ -32,7 +32,7 @@ import { Student } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
   const { status } = useSession({ required: true });
-  const { students, setStudents } = useContext(AppContext);
+  const { students, setStudents, hasFetchedStudents, setHasFetchedStudents } = useContext(AppContext);
 
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -89,8 +89,11 @@ const Dashboard: NextPage = () => {
   }, [setStudents]);
 
   useEffect(() => {
-    handleGetStudents();
-  }, [handleGetStudents]);
+    if (!hasFetchedStudents) {
+      handleGetStudents();
+      setHasFetchedStudents(true);
+    }
+  }, [handleGetStudents, hasFetchedStudents, setHasFetchedStudents]);
 
   if (status === 'loading') {
     return <div>Loading</div>;

@@ -6,8 +6,9 @@ import Head from 'next/head';
 import type { NextPage } from 'next';
 
 // Libraries
+import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { PDFViewer } from '@react-pdf/renderer';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 
 // React Multi Date Picker
 import DatePicker from 'react-multi-date-picker';
@@ -27,43 +28,65 @@ import Navbar from '../components/Navbar';
 import InvoicePDFTemplate1 from '../pdf/InvoicePDFTemplate1';
 
 // Types
-import { Student } from '../types/customTypes';
+import { Student, PdfData } from '../types/customTypes';
 
-const pdfData = {
-  yourName: 'Mark Mulligan',
-  yourEmail: 'mark.mulligan.jr1@gmail.com',
-  yourNumber: '817-504-5426',
-  studentName: 'Bill Joel',
-  parentName: 'Kevin Joel',
-  parentEmail: 'kevinjoel@gmail.com',
+export const formatPDFTitle = (studentName: string, months: string[]) => {
+  let formattedName = studentName.trim().split(' ').join('');
+  let formattedDates = months.join('_');
+  return `${formattedName}-${formattedDates}-invoice.pdf`;
 };
 
 const Invoice: NextPage = () => {
   const { data: session, status } = useSession({ required: true });
-  const { students } = useContext(AppContext);
+  const { students, setStudents, hasFetchedStudents, setHasFetchedStudents } = useContext(AppContext);
   const [lessonDates, setLessonDates] = useState<any>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [pdfData, setPdfData] = useState<PdfData | null>(null);
 
   const createPDFData = useCallback(() => {
     if (!session || !selectedStudent || !lessonDates || !(lessonDates.length > 0)) {
       return;
     }
 
+    let months: string[] = [];
+
     const lessonDateStrings = lessonDates.map((lessonDate: any) => {
+      if (!months.includes(lessonDate.month.name)) {
+        months.push(lessonDate.month.name);
+      }
+
       return `${lessonDate.month}/${lessonDate.day}/${lessonDate.year}`;
     });
 
-    let pdfData = {
-      yourName: session.user.name,
+    const newPdfData: PdfData = {
+      yourName: session.user.name || '',
       studentName: selectedStudent.name,
       parentName: selectedStudent.parentName,
       parentEmail: selectedStudent.parentEmail,
       lessonAmount: selectedStudent.lessonAmount,
+      months: months,
       lessonDates: lessonDateStrings,
+      totalAmount: selectedStudent.lessonAmount * lessonDateStrings.length,
     };
 
-    console.log('pdfData', pdfData);
+    setPdfData(newPdfData);
   }, [session, selectedStudent, lessonDates]);
+
+  const handleGetStudents = useCallback(async () => {
+    try {
+      const { data } = await axios.get<Student[]>('/api/students');
+      setStudents(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [setStudents]);
+
+  useEffect(() => {
+    if (!hasFetchedStudents) {
+      handleGetStudents();
+      setHasFetchedStudents(true);
+    }
+  }, [handleGetStudents, hasFetchedStudents, setHasFetchedStudents]);
 
   useEffect(() => {
     if (lessonDates && selectedStudent) {
@@ -84,37 +107,53 @@ const Invoice: NextPage = () => {
       </Head>
       <Navbar />
       <Container sx={{ paddingTop: '30px', paddingBottom: '100px' }}>
-        <Autocomplete
-          id="studentSelect"
-          sx={{ width: 300, mb: '1.2rem' }}
-          options={students}
-          value={selectedStudent}
-          onChange={(event: any, newValue: Student | null) => {
-            setSelectedStudent(newValue);
-          }}
-          autoHighlight
-          getOptionLabel={(option) => option.name}
-          renderInput={(params) => <TextField {...params} size="small" label="Select a Student" />}
-        />
-        <DatePicker
-          multiple
-          format="MM/DD/YYYY"
-          value={lessonDates}
-          onChange={setLessonDates}
-          render={(value: any, openCalender: any) => (
-            <TextField
-              sx={{ width: 300 }}
-              value={value}
-              onClick={() => openCalender()}
-              size="small"
-              label="Select Lesson Dates"
-            />
-          )}
-        />
+        <Box sx={{ display: 'flex' }}>
+          <Autocomplete
+            id="studentSelect"
+            sx={{ width: 300, mb: '1rem', mr: '25px' }}
+            options={students}
+            value={selectedStudent}
+            onChange={(event: any, newValue: Student | null) => {
+              setSelectedStudent(newValue);
+            }}
+            autoHighlight
+            getOptionLabel={(option) => option.name}
+            renderInput={(params) => <TextField {...params} size="small" label="Select a Student" />}
+          />
+          <DatePicker
+            multiple
+            sort
+            format="MM/DD/YYYY"
+            value={lessonDates}
+            onChange={setLessonDates}
+            render={(value: any, openCalender: any) => (
+              <TextField
+                sx={{ width: 300 }}
+                value={value}
+                onClick={() => openCalender()}
+                size="small"
+                label="Select Lesson Dates"
+              />
+            )}
+          />
+        </Box>
+
+        {pdfData && (
+          <PDFDownloadLink
+            document={<InvoicePDFTemplate1 data={pdfData} />}
+            fileName={formatPDFTitle(pdfData.studentName, pdfData.months)}
+            className="btn btn-outline-dark btn-block"
+          >
+            {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Click Here to download')}
+          </PDFDownloadLink>
+        )}
+
         <Box sx={{ mt: '50px' }}>
-          <PDFViewer style={{ height: 700, width: '100%' }}>
-            <InvoicePDFTemplate1 data={pdfData} />
-          </PDFViewer>
+          {pdfData && (
+            <PDFViewer style={{ height: 700, width: '100%' }}>
+              <InvoicePDFTemplate1 data={pdfData} />
+            </PDFViewer>
+          )}
         </Box>
       </Container>
     </div>

@@ -25,6 +25,7 @@ export const authOptions: NextAuthOptions = {
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
   }),
+  secret: process.env.MY_SECRET,
   callbacks: {
     async jwt({ token, user, account, profile, isNewUser }) {
       user && (token.user = user);

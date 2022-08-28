@@ -8,7 +8,7 @@ import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/rendere
 // Create styles
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: '#E4E4E4',
+    backgroundColor: '#fbfbfb',
   },
   header: {
     margin: 15,
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   invoiceTitle: {
     color: '#283592',
     fontFamily: 'Helvetica-Bold',
-    fontSize: 40,
+    fontSize: 36,
   },
   heroSection: {
     paddingRight: 30,
@@ -28,19 +28,60 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     fontFamily: 'Helvetica-Bold',
-    fontSize: 18,
+    fontSize: 16,
     marginBottom: 4,
   },
   text: {
     fontFamily: 'Helvetica',
     marginBottom: 4,
-    fontSize: 16,
+    fontSize: 14,
   },
   divider: {
-    marginTop: 40,
+    marginTop: 30,
+    marginBottom: 20,
     marginLeft: 29,
     marginRight: 29,
     borderBottom: '1px solid black',
+  },
+  spacer: {
+    marginTop: 50,
+  },
+  gridHeader: {
+    flexDirection: 'row',
+    marginLeft: 30,
+    marginRight: 30,
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  gridDark: {
+    flexDirection: 'row',
+    marginLeft: 30,
+    marginRight: 30,
+    padding: 3,
+    backgroundColor: '#bebebe',
+  },
+  gridLight: {
+    flexDirection: 'row',
+    marginLeft: 30,
+    marginRight: 30,
+    padding: 3,
+    backgroundColor: '#f2f2f2',
+  },
+  tableHeader: {
+    color: '#283592',
+    fontFamily: 'Helvetica-Bold',
+    fontSize: 14,
+  },
+  col1: {
+    width: '30%',
+  },
+  col2: {
+    width: '30%',
+    textAlign: 'right',
+  },
+  col3: {
+    width: '40%',
+    textAlign: 'right',
   },
   name: {
     marginTop: 10,
@@ -48,43 +89,25 @@ const styles = StyleSheet.create({
     color: '#a75e19',
     fontSize: 40,
   },
-  email: {
-    fontSize: 14,
-    marginBottom: 4,
-    fontWeight: 100,
-    color: '#4b9fa7',
-  },
-  phone: {
-    fontSize: 14,
-  },
-  size14: {
-    fontSize: 14,
-  },
-
   section: {
     margin: 15,
     padding: 15,
   },
-  row: {
+  totalPriceRow: {
     flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingLeft: 30,
+    paddingRight: 30,
   },
-  col: {
-    width: '50%',
+  totalPriceLabel: {
+    fontFamily: 'Helvetica',
+    color: '#283592',
+    fontSize: 14,
   },
-  tableSection: {
-    fontSize: 16,
-    margin: 15,
-    padding: 15,
-  },
-  tableCell: {
-    borderBottom: 1,
-    paddingTop: 12,
-    paddingLeft: 5,
-  },
-  tableCellNoBorder: {
-    paddingTop: 12,
-    paddingRight: 7,
-    textAlign: 'right',
+  totalPrice: {
+    marginLeft: 15,
+    fontFamily: 'Helvetica',
+    fontSize: 14,
   },
 });
 
@@ -124,38 +147,66 @@ const MyDocument: FC<IProps> = ({ data }) => {
           </View>
         </View>
 
+        <View style={styles.spacer}></View>
         <View style={styles.divider}>
           <Text style={styles.text}>{data.studentName}</Text>
         </View>
-        <View style={styles.section}>
-          <View style={styles.row}>
-            {/* <View style={styles.col}>
-              <Text>Private Lessons (Dates)</Text>
-              {props.data.lessons.map((lesson, index) => {
-                return (
-                  <Text style={styles.tableCell} key={`lesson-${index}`}>
-                    {lesson.date}
-                  </Text>
-                );
-              })}
-              <Text style={styles.tableCellNoBorder}>Total</Text>
-            </View> */}
-            {/* <View style={styles.col}>
-              <Text>Amount</Text>
-              {props.data.lessons.map((lesson, index) => {
-                return (
-                  <Text style={styles.tableCell} key={`amount-${index}`}>
-                    ${lesson.cost}
-                  </Text>
-                );
-              })}
-              <Text style={styles.tableCell}>${props.data.total}</Text>
-            </View> */}
+        <View style={styles.gridHeader}>
+          <View style={styles.col1}>
+            <Text style={styles.tableHeader}>Description</Text>
+          </View>
+          <View style={styles.col2}>
+            <Text style={styles.tableHeader}>Qty</Text>
+          </View>
+          <View style={styles.col3}>
+            <Text style={styles.tableHeader}>Price</Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text>Thank You!</Text>
+        <View style={styles.gridDark}>
+          <View style={styles.col1}>
+            <Text style={styles.text}>4/6/2022</Text>
+          </View>
+          <View style={styles.col2}>
+            <Text style={styles.text}>1</Text>
+          </View>
+          <View style={styles.col3}>
+            <Text style={styles.text}>$24</Text>
+          </View>
+        </View>
+
+        <View style={styles.gridLight}>
+          <View style={styles.col1}>
+            <Text style={styles.text}>4/6/2022</Text>
+          </View>
+          <View style={styles.col2}>
+            <Text style={styles.text}>1</Text>
+          </View>
+          <View style={styles.col3}>
+            <Text style={styles.text}>$24</Text>
+          </View>
+        </View>
+
+        <View style={styles.gridDark}>
+          <View style={styles.col1}>
+            <Text style={styles.text}>4/6/2022</Text>
+          </View>
+          <View style={styles.col2}>
+            <Text style={styles.text}>1</Text>
+          </View>
+          <View style={styles.col3}>
+            <Text style={styles.text}>$24</Text>
+          </View>
+        </View>
+
+        <View style={styles.divider}></View>
+        <View style={styles.totalPriceRow}>
+          <View>
+            <Text style={styles.totalPriceLabel}>Total Price</Text>
+          </View>
+          <View>
+            <Text style={styles.totalPrice}>$100</Text>
+          </View>
         </View>
       </Page>
     </Document>

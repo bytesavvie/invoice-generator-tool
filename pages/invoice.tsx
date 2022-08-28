@@ -9,12 +9,14 @@ import type { NextPage } from 'next';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import { debounce } from '@mui/material';
 
 // React Multi Date Picker
 import DatePicker from 'react-multi-date-picker';
 
 // MUI
-import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
@@ -41,7 +43,20 @@ const Invoice: NextPage = () => {
   const { students, setStudents, hasFetchedStudents, setHasFetchedStudents } = useContext(AppContext);
   const [lessonDates, setLessonDates] = useState<any>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [yourName, setYourName] = useState('');
+  const [debouncedName, setDebouncedName] = useState('');
   const [pdfData, setPdfData] = useState<PdfData | null>(null);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const updateYourName = useCallback(
+    debounce((value) => setDebouncedName(value), 600),
+    [],
+  );
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setYourName(e.target.value);
+    updateYourName(e.target.value);
+  };
 
   const createPDFData = useCallback(() => {
     if (!session || !selectedStudent || !lessonDates || !(lessonDates.length > 0)) {
@@ -59,7 +74,7 @@ const Invoice: NextPage = () => {
     });
 
     const newPdfData: PdfData = {
-      yourName: session.user.name || '',
+      yourName: debouncedName,
       studentName: selectedStudent.name,
       parentName: selectedStudent.parentName,
       parentEmail: selectedStudent.parentEmail,
@@ -70,7 +85,7 @@ const Invoice: NextPage = () => {
     };
 
     setPdfData(newPdfData);
-  }, [session, selectedStudent, lessonDates]);
+  }, [session, selectedStudent, lessonDates, debouncedName]);
 
   const handleGetStudents = useCallback(async () => {
     try {
@@ -80,6 +95,13 @@ const Invoice: NextPage = () => {
       console.log(err);
     }
   }, [setStudents]);
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      setYourName(session.user.name);
+      setDebouncedName(session.user.name);
+    }
+  }, [session]);
 
   useEffect(() => {
     if (!hasFetchedStudents) {
@@ -106,37 +128,53 @@ const Invoice: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
+
       <Container sx={{ paddingTop: '30px', paddingBottom: '100px' }}>
-        <Box sx={{ display: 'flex' }}>
-          <Autocomplete
-            id="studentSelect"
-            sx={{ width: 300, mb: '1rem', mr: '25px' }}
-            options={students}
-            value={selectedStudent}
-            onChange={(event: any, newValue: Student | null) => {
-              setSelectedStudent(newValue);
-            }}
-            autoHighlight
-            getOptionLabel={(option) => option.name}
-            renderInput={(params) => <TextField {...params} size="small" label="Select a Student" />}
-          />
-          <DatePicker
-            multiple
-            sort
-            format="MM/DD/YYYY"
-            value={lessonDates}
-            onChange={setLessonDates}
-            render={(value: any, openCalender: any) => (
-              <TextField
-                sx={{ width: 300 }}
-                value={value}
-                onClick={() => openCalender()}
-                size="small"
-                label="Select Lesson Dates"
-              />
-            )}
-          />
-        </Box>
+        <Grid container spacing={4}>
+          <Grid item xs={4}>
+            <Autocomplete
+              id="studentSelect"
+              sx={{ mb: '1rem', mr: '25px' }}
+              fullWidth
+              options={students}
+              value={selectedStudent}
+              onChange={(event: any, newValue: Student | null) => {
+                setSelectedStudent(newValue);
+              }}
+              autoHighlight
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => <TextField {...params} size="small" label="Select a Student" />}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <DatePicker
+              multiple
+              style={{ width: '100%' }}
+              sort
+              format="MM/DD/YYYY"
+              value={lessonDates}
+              onChange={setLessonDates}
+              render={(value: any, openCalender: any) => (
+                <TextField
+                  fullWidth
+                  value={value}
+                  onClick={() => openCalender()}
+                  size="small"
+                  label="Select Lesson Dates"
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              value={yourName}
+              onChange={(e) => handleNameChange(e)}
+              size="small"
+              label="Your Name"
+            />
+          </Grid>
+        </Grid>
 
         {pdfData && (
           <PDFDownloadLink
@@ -144,7 +182,9 @@ const Invoice: NextPage = () => {
             fileName={formatPDFTitle(pdfData.studentName, pdfData.months)}
             className="btn btn-outline-dark btn-block"
           >
-            {({ blob, url, loading, error }) => (loading ? 'Loading document...' : 'Click Here to download')}
+            {({ blob, url, loading, error }) =>
+              loading ? 'Loading document...' : <Button variant="outlined">Download PDF</Button>
+            }
           </PDFDownloadLink>
         )}
 

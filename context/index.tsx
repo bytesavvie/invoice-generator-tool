@@ -9,6 +9,8 @@ interface InitialBlockContext {
   setStudents: React.Dispatch<SetStateAction<Student[]>>;
   hasFetchedStudents: boolean;
   setHasFetchedStudents: React.Dispatch<SetStateAction<boolean>>;
+  loadingText: string;
+  setLoadingText: React.Dispatch<SetStateAction<string>>;
 }
 
 const defaultContext = {
@@ -16,6 +18,8 @@ const defaultContext = {
   setStudents: () => {},
   hasFetchedStudents: false,
   setHasFetchedStudents: () => {},
+  loadingText: '',
+  setLoadingText: () => {},
 };
 
 export const AppContext = React.createContext<InitialBlockContext>(defaultContext);
@@ -23,6 +27,7 @@ export const AppContext = React.createContext<InitialBlockContext>(defaultContex
 export const AppContextProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
   const [students, setStudents] = useState<Student[]>(defaultContext.students);
   const [hasFetchedStudents, setHasFetchedStudents] = useState(defaultContext.hasFetchedStudents);
+  const [loadingText, setLoadingText] = useState(defaultContext.loadingText);
 
   return (
     <AppContext.Provider
@@ -31,6 +36,8 @@ export const AppContextProvider: FC<{ children: React.ReactNode }> = ({ children
         setStudents,
         hasFetchedStudents,
         setHasFetchedStudents,
+        loadingText,
+        setLoadingText,
       }}
     >
       {children}

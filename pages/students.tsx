@@ -14,8 +14,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 
 // Components
@@ -23,6 +21,7 @@ import Navbar from '../components/Navbar';
 import StudentTable from '../components/StudentTable';
 import StudentModal from '../components/StudentModal';
 import ConfirmModal from '../components/ConfirmModal';
+import LoadingModal from '../components/LoadingModal';
 
 // Context
 import { AppContext } from '../context';
@@ -32,8 +31,10 @@ import { Student } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
   const { status } = useSession({ required: true });
-  const { students, setStudents, hasFetchedStudents, setHasFetchedStudents } = useContext(AppContext);
+  const { students, setStudents, hasFetchedStudents, setHasFetchedStudents, loadingText, setLoadingText } =
+    useContext(AppContext);
 
+  const [studentSearch, setStudentSearch] = useState('');
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -62,6 +63,8 @@ const Dashboard: NextPage = () => {
       return;
     }
 
+    setLoadingText('Deleting Student...');
+
     try {
       await axios.delete(`/api/students?id=${selectedStudent.id}`);
       const updatedStudents: Student[] = [];
@@ -76,17 +79,22 @@ const Dashboard: NextPage = () => {
       console.log(err);
     }
 
+    setLoadingText('');
     setShowConfirmModal(false);
   };
 
+  console.log('loadingText', loadingText);
+
   const handleGetStudents = useCallback(async () => {
+    setLoadingText('Fetching Data...');
     try {
       const { data } = await axios.get<Student[]>('/api/students');
       setStudents(data);
     } catch (err) {
       console.log(err);
     }
-  }, [setStudents]);
+    setLoadingText('');
+  }, [setStudents, setLoadingText]);
 
   useEffect(() => {
     if (!hasFetchedStudents) {
@@ -111,35 +119,20 @@ const Dashboard: NextPage = () => {
         <Typography variant="h1" sx={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
           Dashboard
         </Typography>
-        <Box component="section" sx={{ marginBottom: '2rem' }}>
-          <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '1rem' }}>
-            Your Info
-          </Typography>
-          <Paper sx={{ padding: '20px' }}>
-            <Grid container spacing={4} sx={{ marginBottom: '1rem' }}>
-              <Grid item xs={4}>
-                <TextField fullWidth id="outlined-basic" label="Name" variant="outlined" size="small" />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField fullWidth id="outlined-basic" label="Email" variant="outlined" size="small" />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField fullWidth id="outlined-basic" label="Phone Number" variant="outlined" size="small" />
-              </Grid>
-            </Grid>
-
-            <Box sx={{ textAlign: 'center' }}>
-              <Button variant="contained">Save Changes</Button>
-            </Box>
-          </Paper>
-        </Box>
 
         <Box component="section">
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '1rem' }}>
             Students
           </Typography>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-            <TextField id="outlined-basic" label="Search" variant="outlined" size="small" />
+            <TextField
+              value={studentSearch}
+              onChange={(e) => setStudentSearch(e.target.value)}
+              id="outlined-basic"
+              label="Search"
+              variant="outlined"
+              size="small"
+            />
             <Button variant="contained" onClick={() => handleAddStudentClick()}>
               Add Student
             </Button>
@@ -165,6 +158,7 @@ const Dashboard: NextPage = () => {
           />
         </Box>
       </Container>
+      {loadingText && <LoadingModal text={loadingText} />}
     </div>
   );
 };

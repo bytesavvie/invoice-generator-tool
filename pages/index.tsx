@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 // Next
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
@@ -12,6 +13,7 @@ import { useSession } from 'next-auth/react';
 
 // MUI
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -20,16 +22,6 @@ import Typography from '@mui/material/Typography';
 
 const Home: NextPage = () => {
   const { status } = useSession();
-  const router = useRouter();
-
-  const [isRedirecting, setIsRedirecting] = useState(false);
-
-  useEffect(() => {
-    if (status === 'authenticated' && router && !isRedirecting) {
-      setIsRedirecting(true);
-      router.push('/students');
-    }
-  }, [status, router, isRedirecting]);
 
   if (status === 'loading') {
     return <div>Loading</div>;
@@ -54,11 +46,17 @@ const Home: NextPage = () => {
               generate monthly lesson invoices to get paid on time.
             </Typography>
           </CardContent>
-          <CardActions sx={{ marginBottom: '1rem' }}>
-            <Button variant="outlined" onClick={() => signIn()} sx={{ margin: 'auto' }}>
-              Sign In
-            </Button>
-          </CardActions>
+          <Box style={{ padding: '16px', display: 'flex', justifyContent: 'center' }}>
+            {status === 'authenticated' ? (
+              <Link href="/students" passHref>
+                <Button variant="outlined">Go to App</Button>
+              </Link>
+            ) : (
+              <Button variant="outlined" onClick={() => signIn()} sx={{ margin: 'auto' }}>
+                Sign In
+              </Button>
+            )}
+          </Box>
         </Card>
       </Container>
     </div>

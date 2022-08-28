@@ -41,7 +41,7 @@ interface IProps {
 }
 
 const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
-  const { students, setStudents } = useContext(AppContext);
+  const { students, setStudents, setLoadingText } = useContext(AppContext);
 
   const [name, setName] = useState('');
   const [parentName, setParentName] = useState('');
@@ -68,6 +68,8 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
     if (!selectedStudent) {
       return;
     }
+
+    setLoadingText('Updating Student Info...');
 
     const student = {
       id: selectedStudent.id,
@@ -96,13 +98,16 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
       studentsArrCopy[indexOfStudent].lessonAmount = Number(lessonAmount);
 
       setStudents(studentsArrCopy);
+      setLoadingText('');
       onClose();
     } catch (err) {
       console.log(err);
+      setLoadingText('');
     }
   };
 
   const handleAddStudent = async () => {
+    setLoadingText('Adding Student...');
     let student = {
       name,
       parentName,
@@ -115,9 +120,11 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
       const { data } = await axios.post('/api/students', { student });
       console.log('new student', data);
       setStudents([...students, { ...data }]);
+      setLoadingText('');
       onClose();
     } catch (err) {
       console.log(err);
+      setLoadingText('');
     }
   };
 
@@ -201,6 +208,7 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
               type="number"
               startAdornment={<InputAdornment position="start">$</InputAdornment>}
               label="Lesson Amount"
+              required
               size="small"
             />
           </FormControl>

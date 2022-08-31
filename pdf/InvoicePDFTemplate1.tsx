@@ -141,7 +141,8 @@ const MyDocument: FC<IProps> = ({ data }) => {
         <View style={styles.heroSection}>
           <View>
             <Text style={styles.subTitle}>Invoice For</Text>
-            <Text style={styles.text}>{data.parentName}</Text>
+            {data.parentName && <Text style={styles.text}>{data.parentName}</Text>}
+
             <Text style={styles.text}>{data.parentEmail}</Text>
           </View>
           <View>

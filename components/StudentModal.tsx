@@ -175,7 +175,6 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
             value={parentName}
             onChange={(e) => setParentName(e.target.value)}
             fullWidth
-            required
             sx={{ marginBottom: '1.4rem' }}
           />
           <TextField

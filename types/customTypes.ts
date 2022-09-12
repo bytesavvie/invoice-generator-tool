@@ -7,8 +7,16 @@ export interface Student {
   lessonAmount: number;
 }
 
+export interface UserInfo {
+  name: string;
+  venmoUsername: string;
+  paypalUsername: string;
+}
+
 export interface PdfData {
   yourName: string;
+  venmoUsername: string;
+  paypalUsername: string;
   parentName: string;
   parentEmail: string;
   studentName: string;

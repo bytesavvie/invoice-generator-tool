@@ -33,24 +33,35 @@ import { Student } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
   const { data: session, status } = useSession({ required: true });
-  const { students, setStudents, hasFetchedStudents, setHasFetchedStudents, loadingText, setLoadingText } =
-    useContext(AppContext);
+  const {
+    students,
+    setStudents,
+    hasFetchedStudents,
+    setHasFetchedStudents,
+    loadingText,
+    setLoadingText,
+    userInfo,
+    setUserInfo,
+    hasFetchedUserInfo,
+    setHasFetchedUserInfo,
+  } = useContext(AppContext);
 
   const [studentSearch, setStudentSearch] = useState('');
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [name, setName] = useState('');
-  const [venmoUsername, setVenmoUsername] = useState('');
-  const [paypalUsername, setPaypalUsername] = useState('');
 
   const handleUpdateUserInfo = async () => {
+    setLoadingText('Updating User Data...');
     try {
+      const { name, venmoUsername, paypalUsername } = userInfo;
       const result = await axios.put('/api/userinfo', { userInfo: { name, venmoUsername, paypalUsername } });
       console.log(result);
     } catch (err) {
       console.log(err);
     }
+
+    setLoadingText('');
   };
 
   const handleEditStudentClick = (student: Student) => {
@@ -109,12 +120,15 @@ const Dashboard: NextPage = () => {
   }, [setStudents, setLoadingText]);
 
   useEffect(() => {
-    if (session?.user?.name) {
-      setName(session.user.name);
-      setVenmoUsername(session.user.venmoUsername || '');
-      setPaypalUsername(session.user.paypalUsername || '');
+    if (session?.user?.name && !hasFetchedUserInfo) {
+      setHasFetchedUserInfo(true);
+      setUserInfo({
+        name: session.user.name,
+        venmoUsername: session.user.venmoUsername || '',
+        paypalUsername: session.user.paypalUsername || '',
+      });
     }
-  }, [session]);
+  }, [session, setUserInfo, hasFetchedUserInfo, setHasFetchedUserInfo]);
 
   useEffect(() => {
     if (!hasFetchedStudents) {
@@ -148,8 +162,8 @@ const Dashboard: NextPage = () => {
             <Grid container spacing={2}>
               <Grid item xs={4}>
                 <TextField
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={userInfo.name}
+                  onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
                   id="outlined-basic"
                   label="Name"
                   variant="outlined"
@@ -159,8 +173,8 @@ const Dashboard: NextPage = () => {
               </Grid>
               <Grid item xs={4}>
                 <TextField
-                  value={venmoUsername}
-                  onChange={(e) => setVenmoUsername(e.target.value)}
+                  value={userInfo.venmoUsername}
+                  onChange={(e) => setUserInfo({ ...userInfo, venmoUsername: e.target.value })}
                   id="outlined-basic"
                   label="Venmo Username"
                   variant="outlined"
@@ -170,8 +184,8 @@ const Dashboard: NextPage = () => {
               </Grid>
               <Grid item xs={4}>
                 <TextField
-                  value={paypalUsername}
-                  onChange={(e) => setPaypalUsername(e.target.value)}
+                  value={userInfo.paypalUsername}
+                  onChange={(e) => setUserInfo({ ...userInfo, paypalUsername: e.target.value })}
                   id="outlined-basic"
                   label="Paypal Username"
                   variant="outlined"

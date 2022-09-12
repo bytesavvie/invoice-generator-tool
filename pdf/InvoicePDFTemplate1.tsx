@@ -4,6 +4,9 @@ import { FC } from 'react';
 // Libraries
 import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 
+// Types
+import { PdfData } from '../types/customTypes';
+
 // Create styles
 // Create styles
 const styles = StyleSheet.create({
@@ -116,16 +119,7 @@ const styles = StyleSheet.create({
 });
 
 interface IProps {
-  data: {
-    yourName: string;
-    parentName: string;
-    parentEmail: string;
-    studentName: string;
-    lessonAmount: number;
-    months: string[];
-    lessonDates: string[];
-    totalAmount: number;
-  };
+  data: PdfData;
 }
 
 // Create Document Component
@@ -147,6 +141,17 @@ const MyDocument: FC<IProps> = ({ data }) => {
           <View>
             <Text style={styles.subTitle}>Payable To</Text>
             <Text style={styles.text}>{data.yourName}</Text>
+            {data.venmoUsername && (
+              <Text style={styles.text}>
+                Venmo: <Link src={`https://account.venmo.com/u/${data.venmoUsername}`}>{data.venmoUsername}</Link>
+              </Text>
+            )}
+            {data.paypalUsername && (
+              <Text style={styles.text}>
+                Paypal:{' '}
+                <Link src={`https://www.paypal.com/paypalme/${data.paypalUsername}`}>{data.paypalUsername}</Link>
+              </Text>
+            )}
           </View>
           <View>
             <Text style={styles.subTitle}>Invoice</Text>

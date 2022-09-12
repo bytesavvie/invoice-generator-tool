@@ -40,7 +40,16 @@ export const formatPDFTitle = (studentName: string, months: string[]) => {
 
 const Invoice: NextPage = () => {
   const { data: session, status } = useSession({ required: true });
-  const { students, setStudents, hasFetchedStudents, setHasFetchedStudents } = useContext(AppContext);
+  const {
+    students,
+    setStudents,
+    hasFetchedStudents,
+    setHasFetchedStudents,
+    userInfo,
+    setUserInfo,
+    hasFetchedUserInfo,
+    setHasFetchedUserInfo,
+  } = useContext(AppContext);
   const [lessonDates, setLessonDates] = useState<any>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [yourName, setYourName] = useState('');
@@ -75,6 +84,8 @@ const Invoice: NextPage = () => {
 
     const newPdfData: PdfData = {
       yourName: debouncedName,
+      venmoUsername: userInfo.venmoUsername,
+      paypalUsername: userInfo.paypalUsername,
       studentName: selectedStudent.name,
       parentName: selectedStudent.parentName,
       parentEmail: selectedStudent.parentEmail,
@@ -85,7 +96,7 @@ const Invoice: NextPage = () => {
     };
 
     setPdfData(newPdfData);
-  }, [session, selectedStudent, lessonDates, debouncedName]);
+  }, [session, selectedStudent, lessonDates, debouncedName, userInfo]);
 
   const handleGetStudents = useCallback(async () => {
     try {
@@ -102,6 +113,17 @@ const Invoice: NextPage = () => {
       setDebouncedName(session.user.name);
     }
   }, [session]);
+
+  useEffect(() => {
+    if (session?.user?.name && !hasFetchedUserInfo) {
+      setHasFetchedUserInfo(true);
+      setUserInfo({
+        name: session.user.name,
+        venmoUsername: session.user.venmoUsername || '',
+        paypalUsername: session.user.paypalUsername || '',
+      });
+    }
+  }, [session, setUserInfo, hasFetchedUserInfo, setHasFetchedUserInfo]);
 
   useEffect(() => {
     if (!hasFetchedStudents) {

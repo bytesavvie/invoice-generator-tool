@@ -68,7 +68,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       res.status(204).json({ message: 'Student information updated.' });
     } catch (err) {
       console.log(err);
-      res.status(500).json({ message: `There was an error updating the student's infromation` });
+      res.status(500).json({ message: `There was an error updating the student's information` });
     }
   }
 

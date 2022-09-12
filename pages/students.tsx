@@ -15,6 +15,8 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
 
 // Components
 import Navbar from '../components/Navbar';
@@ -30,7 +32,7 @@ import { AppContext } from '../context';
 import { Student } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
-  const { status } = useSession({ required: true });
+  const { data: session, status } = useSession({ required: true });
   const { students, setStudents, hasFetchedStudents, setHasFetchedStudents, loadingText, setLoadingText } =
     useContext(AppContext);
 
@@ -38,6 +40,18 @@ const Dashboard: NextPage = () => {
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [name, setName] = useState('');
+  const [venmoUsername, setVenmoUsername] = useState('');
+  const [paypalUsername, setPaypalUsername] = useState('');
+
+  const handleUpdateUserInfo = async () => {
+    try {
+      const result = await axios.put('/api/userinfo', { userInfo: { name, venmoUsername, paypalUsername } });
+      console.log(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleEditStudentClick = (student: Student) => {
     setSelectedStudent(student);
@@ -83,8 +97,6 @@ const Dashboard: NextPage = () => {
     setShowConfirmModal(false);
   };
 
-  console.log('loadingText', loadingText);
-
   const handleGetStudents = useCallback(async () => {
     setLoadingText('Fetching Data...');
     try {
@@ -95,6 +107,14 @@ const Dashboard: NextPage = () => {
     }
     setLoadingText('');
   }, [setStudents, setLoadingText]);
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      setName(session.user.name);
+      setVenmoUsername(session.user.venmoUsername || '');
+      setPaypalUsername(session.user.paypalUsername || '');
+    }
+  }, [session]);
 
   useEffect(() => {
     if (!hasFetchedStudents) {
@@ -119,6 +139,54 @@ const Dashboard: NextPage = () => {
         <Typography variant="h1" sx={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
           Dashboard
         </Typography>
+
+        <Box component="section" sx={{ marginBottom: '2rem' }}>
+          <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '2rem' }}>
+            Your Info
+          </Typography>
+          <Paper component="section" sx={{ padding: '1rem' }}>
+            <Grid container spacing={2}>
+              <Grid item xs={4}>
+                <TextField
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  id="outlined-basic"
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  value={venmoUsername}
+                  onChange={(e) => setVenmoUsername(e.target.value)}
+                  id="outlined-basic"
+                  label="Venmo Username"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <TextField
+                  value={paypalUsername}
+                  onChange={(e) => setPaypalUsername(e.target.value)}
+                  id="outlined-basic"
+                  label="Paypal Username"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+            <Box sx={{ textAlign: 'center', marginTop: '1rem' }}>
+              <Button variant="contained" onClick={() => handleUpdateUserInfo()}>
+                Update
+              </Button>
+            </Box>
+          </Paper>
+        </Box>
 
         <Box component="section">
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '1rem' }}>

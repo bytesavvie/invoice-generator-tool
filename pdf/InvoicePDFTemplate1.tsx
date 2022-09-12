@@ -1,7 +1,7 @@
 // React
 import { FC } from 'react';
 
-// Libraies
+// Libraries
 import { Document, Page, Text, View, StyleSheet, Link } from '@react-pdf/renderer';
 
 // Create styles

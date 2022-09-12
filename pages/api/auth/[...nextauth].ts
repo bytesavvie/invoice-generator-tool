@@ -1,11 +1,7 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { FirestoreAdapter } from '@next-auth/firebase-adapter';
-import type { NextAuthOptions, Session } from 'next-auth';
-
-interface UserSession extends Session {
-  id?: string;
-}
+import type { NextAuthOptions } from 'next-auth';
 
 export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/providers/overview
@@ -36,6 +32,8 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           id: user.id,
+          venmoUsername: user.venmoUsername || '',
+          paypalUsername: user.paypalUsername || '',
           ...session.user,
         },
       };

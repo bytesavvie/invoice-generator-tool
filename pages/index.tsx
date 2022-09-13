@@ -8,7 +8,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 // Libraries
-import { signIn, signOut } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
 
 // MUI
@@ -51,7 +51,11 @@ const Home: NextPage = () => {
                 <Button variant="outlined">Go to App</Button>
               </Link>
             ) : (
-              <Button variant="outlined" onClick={() => signIn()} sx={{ margin: 'auto' }}>
+              <Button
+                variant="outlined"
+                onClick={() => signIn('google', { callbackUrl: '/students' })}
+                sx={{ margin: 'auto' }}
+              >
                 Sign In
               </Button>
             )}

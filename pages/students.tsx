@@ -138,12 +138,16 @@ const Dashboard: NextPage = () => {
   useEffect(() => {
     if (session?.user?.name && !hasFetchedUserInfo) {
       setHasFetchedUserInfo(true);
-      setUserInfo({
+
+      const newUserInfo = {
         name: session.user.name,
         venmoUsername: session.user.venmoUsername || '',
         paypalUsername: session.user.paypalUsername || '',
         zelle: session.user.zelle || '',
-      });
+      };
+
+      setUserInfo(newUserInfo);
+      setOriginalUserInfo(newUserInfo);
     }
   }, [session, setUserInfo, hasFetchedUserInfo, setHasFetchedUserInfo]);
 
@@ -226,11 +230,16 @@ const Dashboard: NextPage = () => {
                 />
               </Grid>
             </Grid>
-            <Box sx={{ textAlign: 'center', marginTop: '1rem' }}>
-              <Button variant="contained" onClick={() => handleUpdateUserInfo()}>
-                Update
-              </Button>
-            </Box>
+            {unsavedChanges.name ||
+            unsavedChanges.venmoUsername ||
+            unsavedChanges.paypalUsername ||
+            unsavedChanges.zelle ? (
+              <Box sx={{ textAlign: 'center', marginTop: '1rem' }}>
+                <Button variant="contained" onClick={() => handleUpdateUserInfo()}>
+                  Update
+                </Button>
+              </Box>
+            ) : null}
           </Paper>
         </Box>
 

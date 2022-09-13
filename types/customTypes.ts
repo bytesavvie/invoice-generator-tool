@@ -11,12 +11,14 @@ export interface UserInfo {
   name: string;
   venmoUsername: string;
   paypalUsername: string;
+  zelle: string;
 }
 
 export interface PdfData {
   yourName: string;
   venmoUsername: string;
   paypalUsername: string;
+  zelle: string;
   parentName: string;
   parentEmail: string;
   studentName: string;

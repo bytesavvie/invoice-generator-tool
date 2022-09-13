@@ -24,7 +24,7 @@ const defaultContext = {
   setHasFetchedStudents: () => {},
   loadingText: '',
   setLoadingText: () => {},
-  userInfo: { name: '', venmoUsername: '', paypalUsername: '' },
+  userInfo: { name: '', venmoUsername: '', paypalUsername: '', zelle: '' },
   setUserInfo: () => {},
   hasFetchedUserInfo: false,
   setHasFetchedUserInfo: () => {},

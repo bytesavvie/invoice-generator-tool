@@ -126,6 +126,7 @@ const Dashboard: NextPage = () => {
         name: session.user.name,
         venmoUsername: session.user.venmoUsername || '',
         paypalUsername: session.user.paypalUsername || '',
+        zelle: session.user.zelle || '',
       });
     }
   }, [session, setUserInfo, hasFetchedUserInfo, setHasFetchedUserInfo]);
@@ -158,9 +159,9 @@ const Dashboard: NextPage = () => {
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '2rem' }}>
             Your Info
           </Typography>
-          <Paper component="section" sx={{ padding: '1rem' }}>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
+          <Paper component="section" sx={{ padding: '1.2rem' }}>
+            <Grid container spacing={3}>
+              <Grid item xs={6}>
                 <TextField
                   value={userInfo.name}
                   onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
@@ -171,23 +172,34 @@ const Dashboard: NextPage = () => {
                   size="small"
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={6}>
                 <TextField
                   value={userInfo.venmoUsername}
                   onChange={(e) => setUserInfo({ ...userInfo, venmoUsername: e.target.value })}
                   id="outlined-basic"
-                  label="Venmo Username"
+                  label="Venmo Username (No @)"
                   variant="outlined"
                   fullWidth
                   size="small"
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={6}>
                 <TextField
                   value={userInfo.paypalUsername}
                   onChange={(e) => setUserInfo({ ...userInfo, paypalUsername: e.target.value })}
                   id="outlined-basic"
                   label="Paypal Username"
+                  variant="outlined"
+                  fullWidth
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  value={userInfo.zelle}
+                  onChange={(e) => setUserInfo({ ...userInfo, zelle: e.target.value })}
+                  id="outlined-basic"
+                  label="Zelle (Phone Or Email)"
                   variant="outlined"
                   fullWidth
                   size="small"

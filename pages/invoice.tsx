@@ -86,6 +86,7 @@ const Invoice: NextPage = () => {
       yourName: debouncedName,
       venmoUsername: userInfo.venmoUsername,
       paypalUsername: userInfo.paypalUsername,
+      zelle: userInfo.zelle,
       studentName: selectedStudent.name,
       parentName: selectedStudent.parentName,
       parentEmail: selectedStudent.parentEmail,
@@ -121,6 +122,7 @@ const Invoice: NextPage = () => {
         name: session.user.name,
         venmoUsername: session.user.venmoUsername || '',
         paypalUsername: session.user.paypalUsername || '',
+        zelle: session.user.zelle || '',
       });
     }
   }, [session, setUserInfo, hasFetchedUserInfo, setHasFetchedUserInfo]);

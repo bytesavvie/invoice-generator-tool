@@ -10,11 +10,13 @@ declare module 'next-auth' {
       id?: string;
       venmoUsername?: string;
       paypalUsername?: string;
+      zelle?: string;
     } & DefaultSession['user'];
   }
 
   interface User extends DefaultUser {
     venmoUsername?: string;
     paypalUsername?: string;
+    zelle?: string;
   }
 }

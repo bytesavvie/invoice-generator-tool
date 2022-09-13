@@ -152,6 +152,7 @@ const MyDocument: FC<IProps> = ({ data }) => {
                 <Link src={`https://www.paypal.com/paypalme/${data.paypalUsername}`}>{data.paypalUsername}</Link>
               </Text>
             )}
+            {data.zelle && <Text style={styles.text}>Zelle: {data.zelle}</Text>}
           </View>
           <View>
             <Text style={styles.subTitle}>Invoice</Text>

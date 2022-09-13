@@ -50,6 +50,13 @@ const Dashboard: NextPage = () => {
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [originalUserInfo, setOriginalUserInfo] = useState(userInfo);
+  const [unsavedChanges, setUnsavedChanges] = useState({
+    name: false,
+    venmoUsername: false,
+    paypalUsername: false,
+    zelle: false,
+  });
 
   const handleUpdateUserInfo = async () => {
     setLoadingText('Updating User Data...');
@@ -120,6 +127,15 @@ const Dashboard: NextPage = () => {
   }, [setStudents, setLoadingText]);
 
   useEffect(() => {
+    setUnsavedChanges({
+      name: userInfo.name !== originalUserInfo.name,
+      venmoUsername: userInfo.venmoUsername !== originalUserInfo.venmoUsername,
+      paypalUsername: userInfo.paypalUsername !== originalUserInfo.paypalUsername,
+      zelle: userInfo.zelle !== originalUserInfo.zelle,
+    });
+  }, [userInfo, originalUserInfo]);
+
+  useEffect(() => {
     if (session?.user?.name && !hasFetchedUserInfo) {
       setHasFetchedUserInfo(true);
       setUserInfo({
@@ -170,6 +186,7 @@ const Dashboard: NextPage = () => {
                   variant="outlined"
                   fullWidth
                   size="small"
+                  helperText={unsavedChanges.name ? 'Unsaved Changes' : ''}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -181,6 +198,7 @@ const Dashboard: NextPage = () => {
                   variant="outlined"
                   fullWidth
                   size="small"
+                  helperText={unsavedChanges.venmoUsername ? 'Unsaved Changes' : ''}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -192,6 +210,7 @@ const Dashboard: NextPage = () => {
                   variant="outlined"
                   fullWidth
                   size="small"
+                  helperText={unsavedChanges.paypalUsername ? 'Unsaved Changes' : ''}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -203,6 +222,7 @@ const Dashboard: NextPage = () => {
                   variant="outlined"
                   fullWidth
                   size="small"
+                  helperText={unsavedChanges.zelle ? 'Unsaved Changes' : ''}
                 />
               </Grid>
             </Grid>

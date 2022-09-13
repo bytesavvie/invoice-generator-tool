@@ -150,7 +150,7 @@ const Dashboard: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Navbar />
-      <Container sx={{ paddingTop: '30px', paddingBottom: '100px' }}>
+      <Container sx={{ paddingTop: '100px', paddingBottom: '100px' }}>
         <Typography variant="h1" sx={{ fontSize: '2.5rem', marginBottom: '2rem' }}>
           Dashboard
         </Typography>
@@ -161,7 +161,7 @@ const Dashboard: NextPage = () => {
           </Typography>
           <Paper component="section" sx={{ padding: '1.2rem' }}>
             <Grid container spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   value={userInfo.name}
                   onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
@@ -172,7 +172,7 @@ const Dashboard: NextPage = () => {
                   size="small"
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   value={userInfo.venmoUsername}
                   onChange={(e) => setUserInfo({ ...userInfo, venmoUsername: e.target.value })}
@@ -183,7 +183,7 @@ const Dashboard: NextPage = () => {
                   size="small"
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   value={userInfo.paypalUsername}
                   onChange={(e) => setUserInfo({ ...userInfo, paypalUsername: e.target.value })}
@@ -194,7 +194,7 @@ const Dashboard: NextPage = () => {
                   size="small"
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   value={userInfo.zelle}
                   onChange={(e) => setUserInfo({ ...userInfo, zelle: e.target.value })}
@@ -218,8 +218,15 @@ const Dashboard: NextPage = () => {
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '1rem' }}>
             Students
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              justifyContent: 'space-between',
+            }}
+          >
             <TextField
+              sx={{ marginBottom: '1.5rem' }}
               value={studentSearch}
               onChange={(e) => setStudentSearch(e.target.value)}
               id="outlined-basic"
@@ -227,7 +234,7 @@ const Dashboard: NextPage = () => {
               variant="outlined"
               size="small"
             />
-            <Button variant="contained" onClick={() => handleAddStudentClick()}>
+            <Button variant="contained" onClick={() => handleAddStudentClick()} sx={{ marginBottom: '1.5rem' }}>
               Add Student
             </Button>
           </Box>

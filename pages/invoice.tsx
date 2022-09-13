@@ -154,12 +154,11 @@ const Invoice: NextPage = () => {
       </Head>
       <Navbar />
 
-      <Container sx={{ paddingTop: '30px', paddingBottom: '100px' }}>
-        <Grid container spacing={4}>
-          <Grid item xs={4}>
+      <Container sx={{ paddingTop: '100px', paddingBottom: '100px' }}>
+        <Grid container spacing={4} sx={{ marginBottom: '30px' }}>
+          <Grid item xs={12} sm={4}>
             <Autocomplete
               id="studentSelect"
-              sx={{ mb: '1rem', mr: '25px' }}
               fullWidth
               options={students}
               value={selectedStudent}
@@ -171,7 +170,7 @@ const Invoice: NextPage = () => {
               renderInput={(params) => <TextField {...params} size="small" label="Select a Student" />}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={4}>
             <DatePicker
               multiple
               style={{ width: '100%' }}
@@ -190,7 +189,7 @@ const Invoice: NextPage = () => {
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} sm={4}>
             <TextField
               fullWidth
               value={yourName}

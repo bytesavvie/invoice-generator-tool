@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 
 // Types
 import { Student } from '../types/customTypes';
@@ -25,7 +26,7 @@ interface IProps {
 const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentClick, studentData }) => {
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ minWidth: 670, overflow: 'auto' }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>Student Name</TableCell>
@@ -33,7 +34,7 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
             <TableCell>Parent Email</TableCell>
             <TableCell>Parent Phone</TableCell>
             <TableCell align="right">Lesson Amount</TableCell>
-            <TableCell align="right"></TableCell>
+            <TableCell align="right" sx={{ minWidth: '130px' }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -47,12 +48,23 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
               <TableCell>{student.parentPhone}</TableCell>
               <TableCell align="right">{student.lessonAmount}</TableCell>
               <TableCell align="right">
-                <IconButton sx={{ marginRight: '20px' }} onClick={() => handleEditStudentClick(student)}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton onClick={() => handleDeleteStudentClick(student)}>
-                  <DeleteIcon />
-                </IconButton>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    maxWidth: 100,
+                    marginRight: 0,
+                    marginLeft: 'auto',
+                  }}
+                >
+                  <IconButton onClick={() => handleEditStudentClick(student)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteStudentClick(student)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
               </TableCell>
             </TableRow>
           ))}

@@ -31,7 +31,7 @@ const Navbar = () => {
             </Link>
           </ListItem>
           <ListItem sx={{ paddingTop: 0, paddingBottom: 0 }}>
-            <Button sx={{ minWidth: 90 }} onClick={() => signOut()}>
+            <Button sx={{ minWidth: 90 }} onClick={() => signOut({ callbackUrl: '/' })}>
               Sign Out
             </Button>
           </ListItem>

@@ -236,7 +236,7 @@ const Dashboard: NextPage = () => {
             unsavedChanges.zelle ? (
               <Box sx={{ textAlign: 'center', marginTop: '1rem' }}>
                 <Button variant="contained" onClick={() => handleUpdateUserInfo()}>
-                  Update
+                  Save
                 </Button>
               </Box>
             ) : null}

@@ -27,3 +27,5 @@ export interface PdfData {
   lessonDates: string[];
   totalAmount: number;
 }
+
+export type Order = 'asc' | 'desc' | undefined;

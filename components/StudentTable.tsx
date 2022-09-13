@@ -1,5 +1,5 @@
 // React
-import { FC } from 'react';
+import { FC, useState, useEffect } from 'react';
 
 // MUI
 import Table from '@mui/material/Table';
@@ -14,8 +14,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 
+// Components
+import TableHeaderSortIcon from './CustomSortIcon';
+
 // Types
-import { Student } from '../types/customTypes';
+import { Student, Order } from '../types/customTypes';
 
 interface IProps {
   handleEditStudentClick: (student: Student) => void;
@@ -24,13 +27,34 @@ interface IProps {
 }
 
 const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentClick, studentData }) => {
+  const [order, setOrder] = useState<Order>(undefined);
+  const [orderBy, setOrderBy] = useState('');
+
+  const handleTableHeaderClick = (selectedColumn: string) => {
+    if (orderBy === selectedColumn) {
+      if (order === 'asc') setOrder('desc');
+      if (order === 'desc') setOrder(undefined);
+      if (!order) setOrder('asc');
+    } else {
+      setOrder('asc');
+      setOrderBy(selectedColumn);
+    }
+  };
+
+  useEffect(() => {
+    console.log(order);
+    console.log(orderBy);
+  }, [order, orderBy]);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 670, overflow: 'auto' }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Student Name</TableCell>
-            <TableCell>Parent Name</TableCell>
+            <TableCell onClick={() => handleTableHeaderClick('name')}>
+              <TableHeaderSortIcon columnHeaderKey="name" columnName="Student Name" order={order} orderBy={orderBy} />
+            </TableCell>
+            <TableCell onClick={() => handleTableHeaderClick('parentName')}>Parent Name</TableCell>
             <TableCell>Parent Email</TableCell>
             <TableCell>Parent Phone</TableCell>
             <TableCell align="right">Lesson Amount</TableCell>

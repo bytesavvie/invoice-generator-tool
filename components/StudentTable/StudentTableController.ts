@@ -33,3 +33,25 @@ export const sortStudentsByParentEmail = (studentData: Student[], order: Order) 
 
   return [...studentData];
 };
+
+export const sortStudentsByParentPhone = (studentData: Student[], order: Order) => {
+  if (order === 'asc') {
+    return [...studentData].sort((a, b) => {
+      const aPhoneNumber = Number(a.parentPhone.replace(/\D/g, ''));
+      const bPhoneNumber = Number(b.parentPhone.replace(/\D/g, ''));
+
+      return aPhoneNumber - bPhoneNumber;
+    });
+  }
+
+  if (order === 'desc') {
+    return [...studentData].sort((a, b) => {
+      const aPhoneNumber = Number(a.parentPhone.replace(/\D/g, ''));
+      const bPhoneNumber = Number(b.parentPhone.replace(/\D/g, ''));
+
+      return bPhoneNumber - aPhoneNumber;
+    });
+  }
+
+  return [...studentData];
+};

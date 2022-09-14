@@ -18,7 +18,12 @@ import Box from '@mui/material/Box';
 import TableHeaderSortIcon from '../CustomSortIcon';
 
 // Controller
-import { sortStudentsByName, sortStudentsByParentName, sortStudentsByParentEmail } from './StudentTableController';
+import {
+  sortStudentsByName,
+  sortStudentsByParentName,
+  sortStudentsByParentEmail,
+  sortStudentsByParentPhone,
+} from './StudentTableController';
 
 // Types
 import { Student, Order } from '../../types/customTypes';
@@ -57,6 +62,8 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
       setOrderedStudentData(sortStudentsByParentName(studentData, order));
     } else if (orderBy === 'parentEmail') {
       setOrderedStudentData(sortStudentsByParentEmail(studentData, order));
+    } else if (orderBy === 'parentPhone') {
+      setOrderedStudentData(sortStudentsByParentPhone(studentData, order));
     }
   }, [order, orderBy, studentData]);
 
@@ -84,7 +91,14 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
                 orderBy={orderBy}
               />
             </TableCell>
-            <TableCell>Parent Phone</TableCell>
+            <TableCell onClick={() => handleTableHeaderClick('parentPhone')}>
+              <TableHeaderSortIcon
+                columnHeaderId="parentPhone"
+                columnName="Parent Phone"
+                order={order}
+                orderBy={orderBy}
+              />
+            </TableCell>
             <TableCell align="right">
               <TableHeaderSortIcon
                 columnHeaderId="lessonAmount"

@@ -1,69 +1,25 @@
 // Types
-import { Student, Order } from '../../types/customTypes';
+import { Student, Order, TableHeaderId } from '../../types/customTypes';
 
-export const sortStudentsByName = (studentData: Student[], order: Order) => {
-  if (order === 'asc') {
-    return [...studentData].sort((a, b) => a.name.localeCompare(b.name));
-  }
-  if (order === 'desc') {
-    return [...studentData].sort((a, b) => b.name.localeCompare(a.name));
+export const sortStudents = (studentData: Student[], order: Order, orderBy: TableHeaderId) => {
+  if (!order) {
+    return [...studentData];
   }
 
-  return [...studentData];
-};
+  return [...studentData].sort((a, b) => {
+    const value1: string | number = a[orderBy];
+    const value2: string | number = b[orderBy];
 
-export const sortStudentsByParentName = (studentData: Student[], order: Order) => {
-  if (order === 'asc') {
-    return [...studentData].sort((a, b) => a.parentName.localeCompare(b.parentName));
-  }
-  if (order === 'desc') {
-    return [...studentData].sort((a, b) => b.parentName.localeCompare(a.parentName));
-  }
+    if (typeof value1 === 'string' && typeof value2 === 'string') {
+      if (order === 'asc') return value1.localeCompare(value2);
+      else return value2.localeCompare(value1);
+    }
 
-  return [...studentData];
-};
+    if (typeof value1 === 'number' && typeof value2 === 'number') {
+      if (order === 'asc') return value1 - value2;
+      else return value2 - value1;
+    }
 
-export const sortStudentsByParentEmail = (studentData: Student[], order: Order) => {
-  if (order === 'asc') {
-    return [...studentData].sort((a, b) => a.parentEmail.localeCompare(b.parentEmail));
-  }
-  if (order === 'desc') {
-    return [...studentData].sort((a, b) => b.parentEmail.localeCompare(a.parentEmail));
-  }
-
-  return [...studentData];
-};
-
-export const sortStudentsByParentPhone = (studentData: Student[], order: Order) => {
-  if (order === 'asc') {
-    return [...studentData].sort((a, b) => {
-      const aPhoneNumber = Number(a.parentPhone.replace(/\D/g, ''));
-      const bPhoneNumber = Number(b.parentPhone.replace(/\D/g, ''));
-
-      return aPhoneNumber - bPhoneNumber;
-    });
-  }
-
-  if (order === 'desc') {
-    return [...studentData].sort((a, b) => {
-      const aPhoneNumber = Number(a.parentPhone.replace(/\D/g, ''));
-      const bPhoneNumber = Number(b.parentPhone.replace(/\D/g, ''));
-
-      return bPhoneNumber - aPhoneNumber;
-    });
-  }
-
-  return [...studentData];
-};
-
-export const sortStudentsByLessonAmount = (studentData: Student[], order: Order) => {
-  if (order === 'asc') {
-    return [...studentData].sort((a, b) => a.lessonAmount - b.lessonAmount);
-  }
-
-  if (order === 'desc') {
-    return [...studentData].sort((a, b) => b.lessonAmount - a.lessonAmount);
-  }
-
-  return [...studentData];
+    return 0;
+  });
 };

@@ -18,16 +18,10 @@ import Box from '@mui/material/Box';
 import TableHeaderSortIcon from '../CustomSortIcon';
 
 // Controller
-import {
-  sortStudentsByName,
-  sortStudentsByParentName,
-  sortStudentsByParentEmail,
-  sortStudentsByParentPhone,
-  sortStudentsByLessonAmount,
-} from './StudentTableController';
+import { sortStudents } from './StudentTableController';
 
 // Types
-import { Student, Order } from '../../types/customTypes';
+import { Student, Order, TableHeaderId } from '../../types/customTypes';
 
 interface IProps {
   handleEditStudentClick: (student: Student) => void;
@@ -37,10 +31,10 @@ interface IProps {
 
 const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentClick, studentData }) => {
   const [order, setOrder] = useState<Order>(undefined);
-  const [orderBy, setOrderBy] = useState('');
+  const [orderBy, setOrderBy] = useState<TableHeaderId>('name');
   const [orderedStudentData, setOrderedStudentData] = useState<Student[]>([]);
 
-  const handleTableHeaderClick = (selectedColumn: string) => {
+  const handleTableHeaderClick = (selectedColumn: TableHeaderId) => {
     if (orderBy === selectedColumn) {
       if (order === 'asc') setOrder('desc');
       if (order === 'desc') setOrder(undefined);
@@ -57,16 +51,8 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
       return;
     }
 
-    if (orderBy === 'name') {
-      setOrderedStudentData(sortStudentsByName(studentData, order));
-    } else if (orderBy === 'parentName') {
-      setOrderedStudentData(sortStudentsByParentName(studentData, order));
-    } else if (orderBy === 'parentEmail') {
-      setOrderedStudentData(sortStudentsByParentEmail(studentData, order));
-    } else if (orderBy === 'parentPhone') {
-      setOrderedStudentData(sortStudentsByParentPhone(studentData, order));
-    } else if (orderBy === 'lessonAmount') {
-      setOrderedStudentData(sortStudentsByLessonAmount(studentData, order));
+    if (orderBy) {
+      setOrderedStudentData(sortStudents(studentData, order, orderBy));
     }
   }, [order, orderBy, studentData]);
 

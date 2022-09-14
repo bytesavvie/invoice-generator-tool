@@ -22,3 +22,14 @@ export const sortStudentsByParentName = (studentData: Student[], order: Order) =
 
   return [...studentData];
 };
+
+export const sortStudentsByParentEmail = (studentData: Student[], order: Order) => {
+  if (order === 'asc') {
+    return [...studentData].sort((a, b) => a.parentEmail.localeCompare(b.parentEmail));
+  }
+  if (order === 'desc') {
+    return [...studentData].sort((a, b) => b.parentEmail.localeCompare(a.parentEmail));
+  }
+
+  return [...studentData];
+};

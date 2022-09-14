@@ -20,7 +20,7 @@ const TableHeaderSortIcon: FC<IProps> = ({ columnHeaderId, columnName, order, or
   return (
     <TableSortLabel active={orderBy === columnHeaderId && order !== undefined} direction={order}>
       {columnName}
-      {orderBy === 'name' ? (
+      {orderBy === columnHeaderId ? (
         <Box component="span" sx={visuallyHidden}>
           {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
         </Box>

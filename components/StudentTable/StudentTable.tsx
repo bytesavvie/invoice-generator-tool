@@ -18,7 +18,7 @@ import Box from '@mui/material/Box';
 import TableHeaderSortIcon from '../CustomSortIcon';
 
 // Controller
-import { sortStudentsByName } from './StudentTableController';
+import { sortStudentsByName, sortStudentsByParentName, sortStudentsByParentEmail } from './StudentTableController';
 
 // Types
 import { Student, Order } from '../../types/customTypes';
@@ -46,14 +46,18 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
   };
 
   useEffect(() => {
-    if (order && orderBy === 'name') {
-      setOrderedStudentData(sortStudentsByName(studentData, order));
-    } else {
+    if (!order) {
       setOrderedStudentData([...studentData]);
+      return;
     }
 
-    console.log(order);
-    console.log(orderBy);
+    if (orderBy === 'name') {
+      setOrderedStudentData(sortStudentsByName(studentData, order));
+    } else if (orderBy === 'parentName') {
+      setOrderedStudentData(sortStudentsByParentName(studentData, order));
+    } else if (orderBy === 'parentEmail') {
+      setOrderedStudentData(sortStudentsByParentEmail(studentData, order));
+    }
   }, [order, orderBy, studentData]);
 
   return (
@@ -72,7 +76,7 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
                 orderBy={orderBy}
               />
             </TableCell>
-            <TableCell>
+            <TableCell onClick={() => handleTableHeaderClick('parentEmail')}>
               <TableHeaderSortIcon
                 columnHeaderId="parentEmail"
                 columnName="Parent Email"

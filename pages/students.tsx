@@ -46,6 +46,7 @@ const Dashboard: NextPage = () => {
     setHasFetchedUserInfo,
   } = useContext(AppContext);
 
+  const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [studentSearch, setStudentSearch] = useState('');
   const [showStudentModal, setShowStudentModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -157,6 +158,34 @@ const Dashboard: NextPage = () => {
       setHasFetchedStudents(true);
     }
   }, [handleGetStudents, hasFetchedStudents, setHasFetchedStudents]);
+
+  useEffect(() => {
+    if (studentSearch) {
+      const newStudentsList = students.filter((student) => {
+        let searchFormatted = studentSearch.toLowerCase();
+        const studentValues: (string | number)[] = Object.values(student);
+        let result = false;
+
+        for (let i = 0; i < studentValues.length; i++) {
+          const studentValue = studentValues[i];
+
+          if (typeof studentValue === 'number') {
+            result = studentValue.toString().includes(searchFormatted);
+          } else {
+            result = studentValue.toLowerCase().includes(searchFormatted);
+          }
+
+          if (result) break;
+        }
+
+        return result;
+      });
+
+      setFilteredStudents(newStudentsList);
+    } else {
+      setFilteredStudents([...students]);
+    }
+  }, [students, studentSearch]);
 
   if (status === 'loading') {
     return <LoadingModal text="Loading..." />;
@@ -275,7 +304,7 @@ const Dashboard: NextPage = () => {
           />
           <StudentTable
             handleEditStudentClick={handleEditStudentClick}
-            studentData={students}
+            studentData={filteredStudents}
             handleDeleteStudentClick={handleDeleteStudentClick}
           />
           <ConfirmModal

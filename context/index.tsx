@@ -18,7 +18,7 @@ interface InitialBlockContext {
 }
 
 const defaultContext = {
-  students: [], // need to fix
+  students: [] as Student[], // need to fix
   setStudents: () => {},
   hasFetchedStudents: false,
   setHasFetchedStudents: () => {},

@@ -7,6 +7,8 @@ export interface Student {
   lessonAmount: number;
 }
 
+export type TableHeaderId = keyof Student;
+
 export interface UserInfo {
   name: string;
   venmoUsername: string;

@@ -15,10 +15,13 @@ import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 
 // Components
-import TableHeaderSortIcon from './CustomSortIcon';
+import TableHeaderSortIcon from '../CustomSortIcon';
+
+// Controller
+import { sortStudentsByName } from './StudentTableController';
 
 // Types
-import { Student, Order } from '../types/customTypes';
+import { Student, Order } from '../../types/customTypes';
 
 interface IProps {
   handleEditStudentClick: (student: Student) => void;
@@ -29,6 +32,7 @@ interface IProps {
 const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentClick, studentData }) => {
   const [order, setOrder] = useState<Order>(undefined);
   const [orderBy, setOrderBy] = useState('');
+  const [orderedStudentData, setOrderedStudentData] = useState<Student[]>([]);
 
   const handleTableHeaderClick = (selectedColumn: string) => {
     if (orderBy === selectedColumn) {
@@ -42,9 +46,15 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
   };
 
   useEffect(() => {
+    if (order && orderBy === 'name') {
+      setOrderedStudentData(sortStudentsByName(studentData, order));
+    } else {
+      setOrderedStudentData([...studentData]);
+    }
+
     console.log(order);
     console.log(orderBy);
-  }, [order, orderBy]);
+  }, [order, orderBy, studentData]);
 
   return (
     <TableContainer component={Paper}>
@@ -52,17 +62,38 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
         <TableHead>
           <TableRow>
             <TableCell onClick={() => handleTableHeaderClick('name')}>
-              <TableHeaderSortIcon columnHeaderKey="name" columnName="Student Name" order={order} orderBy={orderBy} />
+              <TableHeaderSortIcon columnHeaderId="name" columnName="Student Name" order={order} orderBy={orderBy} />
             </TableCell>
-            <TableCell onClick={() => handleTableHeaderClick('parentName')}>Parent Name</TableCell>
-            <TableCell>Parent Email</TableCell>
+            <TableCell onClick={() => handleTableHeaderClick('parentName')}>
+              <TableHeaderSortIcon
+                columnHeaderId="parentName"
+                columnName="Parent Name"
+                order={order}
+                orderBy={orderBy}
+              />
+            </TableCell>
+            <TableCell>
+              <TableHeaderSortIcon
+                columnHeaderId="parentEmail"
+                columnName="Parent Email"
+                order={order}
+                orderBy={orderBy}
+              />
+            </TableCell>
             <TableCell>Parent Phone</TableCell>
-            <TableCell align="right">Lesson Amount</TableCell>
+            <TableCell align="right">
+              <TableHeaderSortIcon
+                columnHeaderId="lessonAmount"
+                columnName="Lesson Amount"
+                order={order}
+                orderBy={orderBy}
+              />
+            </TableCell>
             <TableCell align="right" sx={{ minWidth: '130px' }}></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {studentData.map((student) => (
+          {orderedStudentData.map((student) => (
             <TableRow key={student.name} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <TableCell component="th" scope="row">
                 {student.name}

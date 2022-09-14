@@ -20,7 +20,7 @@ import Grid from '@mui/material/Grid';
 
 // Components
 import Navbar from '../components/Navbar';
-import StudentTable from '../components/StudentTable';
+import StudentTable from '../components/StudentTable/StudentTable';
 import StudentModal from '../components/StudentModal';
 import ConfirmModal from '../components/ConfirmModal';
 import LoadingModal from '../components/LoadingModal';

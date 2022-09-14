@@ -7,18 +7,18 @@ import Box from '@mui/material/Box';
 import { visuallyHidden } from '@mui/utils';
 
 // Types
-import { Order } from '../types/customTypes';
+import { Order, TableHeaderId } from '../types/customTypes';
 
 interface IProps {
-  columnHeaderKey: string;
+  columnHeaderId: TableHeaderId;
   columnName: string;
   order: Order;
   orderBy: string;
 }
 
-const TableHeaderSortIcon: FC<IProps> = ({ columnHeaderKey, columnName, order, orderBy }) => {
+const TableHeaderSortIcon: FC<IProps> = ({ columnHeaderId, columnName, order, orderBy }) => {
   return (
-    <TableSortLabel active={orderBy === columnHeaderKey && order !== undefined} direction={order}>
+    <TableSortLabel active={orderBy === columnHeaderId && order !== undefined} direction={order}>
       {columnName}
       {orderBy === 'name' ? (
         <Box component="span" sx={visuallyHidden}>

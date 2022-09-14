@@ -23,6 +23,7 @@ import {
   sortStudentsByParentName,
   sortStudentsByParentEmail,
   sortStudentsByParentPhone,
+  sortStudentsByLessonAmount,
 } from './StudentTableController';
 
 // Types
@@ -64,6 +65,8 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
       setOrderedStudentData(sortStudentsByParentEmail(studentData, order));
     } else if (orderBy === 'parentPhone') {
       setOrderedStudentData(sortStudentsByParentPhone(studentData, order));
+    } else if (orderBy === 'lessonAmount') {
+      setOrderedStudentData(sortStudentsByLessonAmount(studentData, order));
     }
   }, [order, orderBy, studentData]);
 
@@ -99,7 +102,7 @@ const StudentTable: FC<IProps> = ({ handleEditStudentClick, handleDeleteStudentC
                 orderBy={orderBy}
               />
             </TableCell>
-            <TableCell align="right">
+            <TableCell align="right" onClick={() => handleTableHeaderClick('lessonAmount')}>
               <TableHeaderSortIcon
                 columnHeaderId="lessonAmount"
                 columnName="Lesson Amount"

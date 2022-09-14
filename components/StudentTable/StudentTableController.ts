@@ -55,3 +55,15 @@ export const sortStudentsByParentPhone = (studentData: Student[], order: Order) 
 
   return [...studentData];
 };
+
+export const sortStudentsByLessonAmount = (studentData: Student[], order: Order) => {
+  if (order === 'asc') {
+    return [...studentData].sort((a, b) => a.lessonAmount - b.lessonAmount);
+  }
+
+  if (order === 'desc') {
+    return [...studentData].sort((a, b) => b.lessonAmount - a.lessonAmount);
+  }
+
+  return [...studentData];
+};

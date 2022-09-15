@@ -34,6 +34,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           venmoUsername: user.venmoUsername || '',
           paypalUsername: user.paypalUsername || '',
+          zelle: user.zelle || '',
           ...session.user,
         },
       };

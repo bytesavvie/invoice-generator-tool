@@ -31,3 +31,8 @@ export interface PdfData {
 }
 
 export type Order = 'asc' | 'desc' | undefined;
+
+export interface AlertData {
+  message: string;
+  severity: 'error' | 'warning' | 'info' | 'success';
+}

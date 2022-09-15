@@ -2,7 +2,7 @@ import { db } from '../../firebase';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { authOptions } from './auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth/next';
-import { collection, getDoc, doc, addDoc, getDocs, query, where, deleteDoc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 
 interface Error {
   message: string;

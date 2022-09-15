@@ -1,5 +1,5 @@
 // React
-import React, { FC, useState, useEffect, useContext } from 'react';
+import React, { FC, useState, useEffect, useContext, SetStateAction } from 'react';
 
 // libraries
 import axios from 'axios';
@@ -14,12 +14,13 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
+import Alert from '@mui/material/Alert';
 
 // Context
 import { AppContext } from '../context';
 
 // Types
-import { Student } from '../types/customTypes';
+import { Student, AlertData } from '../types/customTypes';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',
@@ -38,9 +39,10 @@ interface IProps {
   showModal: boolean;
   onClose: () => void;
   selectedStudent: Student | null;
+  setAlertData: React.Dispatch<SetStateAction<AlertData>>;
 }
 
-const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
+const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent, setAlertData }) => {
   const { students, setStudents, setLoadingText } = useContext(AppContext);
 
   const [name, setName] = useState('');
@@ -48,6 +50,17 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
   const [parentEmail, setParentEmail] = useState('');
   const [parentPhone, setParentPhone] = useState('');
   const [lessonAmount, setLessonAmount] = useState('24');
+  const [localAlertData, setLocalAlertData] = useState<AlertData>({
+    message: '',
+    severity: 'error',
+  });
+
+  const sendSuccessMessage = (message: string) => {
+    setAlertData({ message, severity: 'success' });
+    setTimeout(() => {
+      setAlertData({ message: '', severity: 'success' });
+    }, 2000);
+  };
 
   const handleCancel = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -100,9 +113,11 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
       setStudents(studentsArrCopy);
       setLoadingText('');
       onClose();
+      sendSuccessMessage('Updated student info.');
     } catch (err) {
       console.log(err);
       setLoadingText('');
+      setLocalAlertData({ message: 'An error occurred. Please Try again.', severity: 'error' });
     }
   };
 
@@ -122,9 +137,11 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
       setStudents([...students, { ...data }]);
       setLoadingText('');
       onClose();
+      sendSuccessMessage('Added student.');
     } catch (err) {
       console.log(err);
       setLoadingText('');
+      setLocalAlertData({ message: 'An error occurred. Please Try again.', severity: 'error' });
     }
   };
 
@@ -156,6 +173,16 @@ const StudentModal: FC<IProps> = ({ showModal, onClose, selectedStudent }) => {
           <Typography variant="h4" align="center" sx={{ marginBottom: '2rem' }}>
             {selectedStudent ? 'Edit Student' : 'Add Student'}
           </Typography>
+          {localAlertData.message && (
+            <Alert
+              sx={{ marginBottom: '1.4rem' }}
+              onClose={() => setLocalAlertData({ message: '', severity: 'error' })}
+              severity={localAlertData.severity}
+              variant="filled"
+            >
+              {localAlertData.message}
+            </Alert>
+          )}
           <TextField
             id="studentName"
             label="Student Name"

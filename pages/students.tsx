@@ -17,6 +17,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import Alert from '@mui/material/Alert';
 
 // Components
 import Navbar from '../components/Navbar';
@@ -29,7 +30,7 @@ import LoadingModal from '../components/LoadingModal';
 import { AppContext } from '../context';
 
 // Types
-import { Student } from '../types/customTypes';
+import { Student, AlertData } from '../types/customTypes';
 
 const Dashboard: NextPage = () => {
   const { data: session, status } = useSession({ required: true });
@@ -58,15 +59,22 @@ const Dashboard: NextPage = () => {
     paypalUsername: false,
     zelle: false,
   });
+  const [userAlertData, setUserAlertData] = useState<AlertData>({ message: '', severity: 'success' });
+  const [studentAlertData, setStudentAlertData] = useState<AlertData>({ message: '', severity: 'success' });
 
   const handleUpdateUserInfo = async () => {
     setLoadingText('Updating User Data...');
     try {
-      const { name, venmoUsername, paypalUsername } = userInfo;
-      const result = await axios.put('/api/userinfo', { userInfo: { name, venmoUsername, paypalUsername } });
-      console.log(result);
+      const { name, venmoUsername, paypalUsername, zelle } = userInfo;
+      await axios.put('/api/userinfo', { userInfo: { name, venmoUsername, paypalUsername, zelle } });
+      setOriginalUserInfo({ name, venmoUsername, paypalUsername, zelle });
+      setUserAlertData({ message: 'Infomration updated.', severity: 'success' });
+      setTimeout(() => {
+        setUserAlertData({ message: '', severity: 'success' });
+      }, 2000);
     } catch (err) {
       console.log(err);
+      setStudentAlertData({ message: 'Unable to update information. Please try again later.', severity: 'error' });
     }
 
     setLoadingText('');
@@ -108,8 +116,16 @@ const Dashboard: NextPage = () => {
       });
 
       setStudents(updatedStudents);
+      setStudentAlertData({ message: 'Student deleted.', severity: 'success' });
+      setTimeout(() => {
+        setStudentAlertData({ message: '', severity: 'success' });
+      }, 2000);
     } catch (err) {
       console.log(err);
+      setStudentAlertData({
+        message: 'An error occured while trying to delete the student. Please try again.',
+        severity: 'error',
+      });
     }
 
     setLoadingText('');
@@ -208,6 +224,15 @@ const Dashboard: NextPage = () => {
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '2rem' }}>
             Your Info
           </Typography>
+          {userAlertData.message && (
+            <Alert
+              onClose={() => setUserAlertData({ message: '', severity: 'success' })}
+              severity={userAlertData.severity}
+              variant="filled"
+            >
+              {userAlertData.message}
+            </Alert>
+          )}
           <Paper component="section" sx={{ padding: '1.2rem' }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
@@ -297,10 +322,21 @@ const Dashboard: NextPage = () => {
             </Button>
           </Box>
 
+          {studentAlertData.message && (
+            <Alert
+              onClose={() => setStudentAlertData({ message: '', severity: 'success' })}
+              severity={studentAlertData.severity}
+              variant="filled"
+            >
+              {studentAlertData.message}
+            </Alert>
+          )}
+
           <StudentModal
             onClose={handleStudentModalClose}
             showModal={showStudentModal}
             selectedStudent={selectedStudent}
+            setAlertData={setStudentAlertData}
           />
           <StudentTable
             handleEditStudentClick={handleEditStudentClick}

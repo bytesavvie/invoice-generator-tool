@@ -55,6 +55,13 @@ const DrawerAppBar = () => {
             </ListItemButton>
           </Link>
         </ListItem>
+        <ListItem disablePadding sx={{ textAlign: 'center' }}>
+          <Link href="/email" passHref>
+            <ListItemButton selected={router.pathname === '/invoice'} sx={{ textAlign: 'center' }}>
+              <ListItemText primary="Email" />
+            </ListItemButton>
+          </Link>
+        </ListItem>
         <ListItem disablePadding>
           <Button fullWidth sx={{ minWidth: 90 }} onClick={() => signOut({ callbackUrl: '/' })}>
             Sign Out
@@ -90,6 +97,11 @@ const DrawerAppBar = () => {
               <ListItem sx={{ paddingTop: 0, paddingBottom: 0 }} disablePadding>
                 <Link href="/invoice" passHref>
                   <ListItemButton selected={router.pathname === '/invoice'}>Invoice</ListItemButton>
+                </Link>
+              </ListItem>
+              <ListItem sx={{ paddingTop: 0, paddingBottom: 0 }} disablePadding>
+                <Link href="/email" passHref>
+                  <ListItemButton selected={router.pathname === '/email'}>Email</ListItemButton>
                 </Link>
               </ListItem>
               <ListItem sx={{ paddingTop: 0, paddingBottom: 0 }} disablePadding>

@@ -36,3 +36,9 @@ export interface AlertData {
   message: string;
   severity: 'error' | 'warning' | 'info' | 'success';
 }
+
+export interface VerifiedEmailAddressData {
+  emailAddress: string;
+  id: string;
+  verificationStatus: 'pending' | 'verified';
+}

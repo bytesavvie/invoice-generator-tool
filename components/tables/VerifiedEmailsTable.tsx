@@ -88,7 +88,7 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
             <TableCell>Email</TableCell>
             <TableCell>
               Verification Status{' '}
-              <Button variant="contained" size="small" sx={{ marginLeft: 2 }} onClick={updateVerificationStatuses}>
+              <Button variant="outlined" size="small" sx={{ marginLeft: 2 }} onClick={updateVerificationStatuses}>
                 Update
               </Button>
             </TableCell>

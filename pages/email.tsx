@@ -15,21 +15,11 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-
-// Icons
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckIcon from '@mui/icons-material/Check';
 
 // Components
 import Navbar from '../components/Navbar';
 import VerifyEmailModal from '../components/modals/VerifyEmailModal';
+import VerifiedEmailsTable from '../components/tables/VerifiedEmailsTable';
 import LoadingModal from '../components/LoadingModal';
 
 // Types
@@ -41,33 +31,6 @@ const Email: NextPage = () => {
   const [loadingText, setLoadingText] = useState('');
   const [showVerifyEmailModal, setShowVerifyEmailModal] = useState(false);
   const [verifiedEmailList, setVerifiedEmailList] = useState<VerifiedEmailAddressData[]>([]);
-
-  const renderVerificationStatus = (status: 'verified' | 'pending') => {
-    if (status === 'verified') {
-      return (
-        <Box sx={{ display: 'flex', alignItems: 'center', color: '#388e3c' }}>
-          {status} <CheckIcon sx={{ marginLeft: '5px' }} />
-        </Box>
-      );
-    }
-
-    return (
-      <Box sx={{ display: 'flex', alignItems: 'center', color: 'rgba(255, 255, 255, 0.6)' }}>
-        {status} <AccessTimeIcon sx={{ marginLeft: '5px' }} />
-      </Box>
-    );
-  };
-
-  const updateVerificationStatuses = async () => {
-    try {
-      const { data } = await axios.put<VerifiedEmailAddressData[]>('/api/verified-emails', {
-        emails: verifiedEmailList,
-      });
-      setVerifiedEmailList(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleGetVerifiedEmailList = useCallback(async () => {
     setLoadingText('Fetching Data...');
@@ -100,46 +63,7 @@ const Email: NextPage = () => {
         </Box>
 
         {verifiedEmailList.length > 0 ? (
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Email</TableCell>
-                  <TableCell>
-                    Verification Status{' '}
-                    <Button
-                      variant="contained"
-                      size="small"
-                      sx={{ marginLeft: 2 }}
-                      onClick={updateVerificationStatuses}
-                    >
-                      Update
-                    </Button>
-                  </TableCell>
-                  <TableCell align="right"></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {verifiedEmailList.map((email) => {
-                  return (
-                    <TableRow key={email.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                      <TableCell component="th" scope="row">
-                        {email.emailAddress}
-                      </TableCell>
-
-                      <TableCell>{renderVerificationStatus(email.verificationStatus)}</TableCell>
-
-                      <TableCell>
-                        <Button variant="outlined" size="small">
-                          Resend Verification Email
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <VerifiedEmailsTable verifiedEmailList={verifiedEmailList} setVerifiedEmailList={setVerifiedEmailList} />
         ) : (
           <p>
             Looks like you currently don&lsquo; t have any verified email addresses associated with this account. Click

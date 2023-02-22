@@ -23,6 +23,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
+// Icons
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckIcon from '@mui/icons-material/Check';
+
 // Components
 import Navbar from '../components/Navbar';
 import VerifyEmailModal from '../components/modals/VerifyEmailModal';
@@ -37,6 +41,33 @@ const Email: NextPage = () => {
   const [loadingText, setLoadingText] = useState('');
   const [showVerifyEmailModal, setShowVerifyEmailModal] = useState(false);
   const [verifiedEmailList, setVerifiedEmailList] = useState<VerifiedEmailAddressData[]>([]);
+
+  const renderVerificationStatus = (status: 'verified' | 'pending') => {
+    if (status === 'verified') {
+      return (
+        <Box sx={{ display: 'flex', alignItems: 'center', color: '#388e3c' }}>
+          {status} <CheckIcon sx={{ marginLeft: '5px' }} />
+        </Box>
+      );
+    }
+
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', color: 'rgba(255, 255, 255, 0.6)' }}>
+        {status} <AccessTimeIcon sx={{ marginLeft: '5px' }} />
+      </Box>
+    );
+  };
+
+  const updateVerificationStatuses = async () => {
+    try {
+      const { data } = await axios.put<VerifiedEmailAddressData[]>('/api/verified-emails', {
+        emails: verifiedEmailList,
+      });
+      setVerifiedEmailList(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleGetVerifiedEmailList = useCallback(async () => {
     setLoadingText('Fetching Data...');
@@ -76,7 +107,12 @@ const Email: NextPage = () => {
                   <TableCell>Email</TableCell>
                   <TableCell>
                     Verification Status{' '}
-                    <Button variant="contained" size="small" sx={{ marginLeft: 2 }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      sx={{ marginLeft: 2 }}
+                      onClick={updateVerificationStatuses}
+                    >
                       Update
                     </Button>
                   </TableCell>
@@ -90,7 +126,8 @@ const Email: NextPage = () => {
                       <TableCell component="th" scope="row">
                         {email.emailAddress}
                       </TableCell>
-                      <TableCell>{email.verificationStatus}</TableCell>
+
+                      <TableCell>{renderVerificationStatus(email.verificationStatus)}</TableCell>
 
                       <TableCell>
                         <Button variant="outlined" size="small">

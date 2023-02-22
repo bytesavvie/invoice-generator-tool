@@ -10,10 +10,22 @@ import axios from 'axios';
 
 // firebase
 import { db } from '../../firebase';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+
+// Types
+import { VerifiedEmailAddressData } from '../../types/customTypes';
 
 interface Error {
   message: string;
+}
+
+interface GetVerifiedEmailsResponse {
+  statusCode: number;
+  verificationStatuses: {
+    [key: string]: {
+      VerificationStatus: 'Pending' | 'Success';
+    };
+  };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | Error>) {
@@ -75,6 +87,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Unable to verification email.' });
+    }
+  }
+
+  if (req.method === 'PUT') {
+    if (!req?.body?.emails) {
+      res.status(400).json({ message: 'bad request' });
+      return;
+    }
+
+    let userId = session.user.id;
+
+    if (!userId) {
+      res.status(404);
+      return;
+    }
+
+    const emailArr: VerifiedEmailAddressData[] = req.body.emails;
+    const emailsString = emailArr.map((email) => email.emailAddress).join(',');
+
+    // const verifiedEmailsCollectionRef = collection(db, 'verifiedEmails');
+
+    // const docRef = doc(db, "cities", "yftq9RGp4jWNSyBZ1D6L");
+
+    // Success | Pending
+
+    try {
+      const { data } = await axios.get<GetVerifiedEmailsResponse>(
+        `${process.env.AWS_API_URL}/verified-emails?email=${emailsString}`,
+        {
+          headers: { 'x-api-key': process.env.AWS_API_KEY || '' },
+        },
+      );
+
+      for (let i = 0; i < emailArr.length; i++) {
+        let email = emailArr[i];
+        if (data.verificationStatuses[email.emailAddress]) {
+          const docRef = doc(db, 'verifiedEmails', email.id);
+          const newStatus =
+            data.verificationStatuses[email.emailAddress].VerificationStatus === 'Success' ? 'verified' : 'pending';
+          await updateDoc(docRef, { verificationStatus: newStatus });
+          emailArr[i].verificationStatus = newStatus;
+        }
+      }
+
+      res.status(data.statusCode).json(emailArr);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Unable to get verification statuses.' });
     }
   }
 }

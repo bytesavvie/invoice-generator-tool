@@ -19,6 +19,10 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 // React Multi Date Picker
 import DatePicker from 'react-multi-date-picker';
@@ -56,6 +60,11 @@ const Email: NextPage = () => {
   const [showVerifyEmailModal, setShowVerifyEmailModal] = useState(false);
   const [verifiedEmailList, setVerifiedEmailList] = useState<VerifiedEmailAddressData[]>([]);
 
+  const [selectedVerifiedEmail, setSelectedVerifiedEmail] = useState<string>('');
+  const [emailTo, setEmailTo] = useState('');
+
+  console.log(students);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateYourName = useCallback(
     debounce((value) => setDebouncedName(value), 600),
@@ -67,12 +76,23 @@ const Email: NextPage = () => {
     updateYourName(e.target.value);
   };
 
+  const handleGetStudents = useCallback(async () => {
+    try {
+      const { data } = await axios.get<Student[]>('/api/students');
+      setStudents(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [setStudents]);
+
   const handleGetVerifiedEmailList = useCallback(async () => {
     setLoadingText('Fetching Data...');
     try {
       const { data } = await axios.get<VerifiedEmailAddressData[]>('/api/verified-emails');
       setVerifiedEmailList(data);
-      console.log('verifiedEmailList', data);
+      if (data.length > 0) {
+        setSelectedVerifiedEmail(data[0].id);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -82,6 +102,26 @@ const Email: NextPage = () => {
   useEffect(() => {
     handleGetVerifiedEmailList();
   }, [handleGetVerifiedEmailList]);
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      setYourName(session.user.name);
+      setDebouncedName(session.user.name);
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (!hasFetchedStudents) {
+      handleGetStudents();
+      setHasFetchedStudents(true);
+    }
+  }, [handleGetStudents, hasFetchedStudents, setHasFetchedStudents]);
+
+  useEffect(() => {
+    if (selectedStudent) {
+      setEmailTo(selectedStudent.parentEmail);
+    }
+  }, [selectedStudent]);
 
   return (
     <div>
@@ -153,6 +193,45 @@ const Email: NextPage = () => {
                 onChange={(e) => handleNameChange(e)}
                 size="small"
                 label="Your Name"
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <FormControl fullWidth>
+                <InputLabel id="fromEmailSelect">From Email</InputLabel>
+                <Select
+                  size="small"
+                  labelId="fromEmailSelect"
+                  id="emailFromSelect"
+                  value={selectedVerifiedEmail}
+                  label="From Email"
+                  onChange={(e) => setSelectedVerifiedEmail(e.target.value)}
+                >
+                  {verifiedEmailList.map((email) => {
+                    return (
+                      <MenuItem key={email.id} value={email.id}>
+                        {email.emailAddress}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                value={emailTo}
+                onChange={(e) => setEmailTo(e.target.value)}
+                size="small"
+                label="To Email"
+              />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <TextField
+                fullWidth
+                value={yourName}
+                onChange={(e) => handleNameChange(e)}
+                size="small"
+                label="Subject"
               />
             </Grid>
           </Grid>

@@ -22,7 +22,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Select from '@mui/material/Select';
 
 // React Multi Date Picker
 import DatePicker from 'react-multi-date-picker';
@@ -62,6 +62,8 @@ const Email: NextPage = () => {
 
   const [selectedVerifiedEmail, setSelectedVerifiedEmail] = useState<string>('');
   const [emailTo, setEmailTo] = useState('');
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
 
   console.log(students);
 
@@ -195,45 +197,61 @@ const Email: NextPage = () => {
                 label="Your Name"
               />
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <FormControl fullWidth>
-                <InputLabel id="fromEmailSelect">From Email</InputLabel>
-                <Select
-                  size="small"
-                  labelId="fromEmailSelect"
-                  id="emailFromSelect"
-                  value={selectedVerifiedEmail}
-                  label="From Email"
-                  onChange={(e) => setSelectedVerifiedEmail(e.target.value)}
-                >
-                  {verifiedEmailList.map((email) => {
-                    return (
-                      <MenuItem key={email.id} value={email.id}>
-                        {email.emailAddress}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                fullWidth
-                value={emailTo}
-                onChange={(e) => setEmailTo(e.target.value)}
-                size="small"
-                label="To Email"
-              />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <TextField
-                fullWidth
-                value={yourName}
-                onChange={(e) => handleNameChange(e)}
-                size="small"
-                label="Subject"
-              />
-            </Grid>
+            {selectedStudent && (
+              <>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel id="fromEmailSelect">From Email</InputLabel>
+                    <Select
+                      size="small"
+                      labelId="fromEmailSelect"
+                      id="emailFromSelect"
+                      value={selectedVerifiedEmail}
+                      label="From Email"
+                      onChange={(e) => setSelectedVerifiedEmail(e.target.value)}
+                    >
+                      {verifiedEmailList.map((email) => {
+                        return (
+                          <MenuItem key={email.id} value={email.id}>
+                            {email.emailAddress}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    value={emailTo}
+                    onChange={(e) => setEmailTo(e.target.value)}
+                    size="small"
+                    label="To Email"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    fullWidth
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    size="small"
+                    label="Subject"
+                  />
+                </Grid>
+                <Grid item sm={12}>
+                  <TextField
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    label="Message"
+                    fullWidth
+                    placeholder="MultiLine with rows: 2 and rowsMax: 4"
+                    multiline
+                    rows={8}
+                    maxRows={10}
+                  />
+                </Grid>
+              </>
+            )}
           </Grid>
         </Box>
       </Container>

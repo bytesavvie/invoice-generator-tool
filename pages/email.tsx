@@ -65,8 +65,6 @@ const Email: NextPage = () => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
 
-  console.log(students);
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateYourName = useCallback(
     debounce((value) => setDebouncedName(value), 600),
@@ -124,6 +122,20 @@ const Email: NextPage = () => {
       setEmailTo(selectedStudent.parentEmail);
     }
   }, [selectedStudent]);
+
+  useEffect(() => {
+    if (selectedStudent && lessonDates && lessonDates.length > 0) {
+      const tempMonthsArr: string[] = [];
+
+      lessonDates.forEach((date: any) => {
+        if (!tempMonthsArr.includes(date.month.name)) {
+          tempMonthsArr.push(date.month.name);
+        }
+      });
+
+      setSubject(`Lesson Invoice - ${tempMonthsArr.join('-')}`);
+    }
+  }, [selectedStudent, lessonDates]);
 
   return (
     <div>
@@ -197,7 +209,7 @@ const Email: NextPage = () => {
                 label="Your Name"
               />
             </Grid>
-            {selectedStudent && (
+            {selectedStudent && lessonDates && (
               <>
                 <Grid item xs={12} sm={4}>
                   <FormControl fullWidth>
@@ -244,9 +256,9 @@ const Email: NextPage = () => {
                     onChange={(e) => setMessage(e.target.value)}
                     label="Message"
                     fullWidth
-                    placeholder="MultiLine with rows: 2 and rowsMax: 4"
+                    placeholder="Type your message here..."
                     multiline
-                    rows={8}
+                    minRows={8}
                     maxRows={10}
                   />
                 </Grid>

@@ -26,7 +26,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       !req.body.emailTo ||
       !req.body.message ||
       !req.body.subject ||
-      !req.body.base64pdfData
+      !req.body.base64pdfData ||
+      !req.body.pdfTitle
     ) {
       res.status(400).json({ message: 'bad request' });
       return;
@@ -39,12 +40,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       return;
     }
 
-    const { emailFrom, emailTo, message, subject, base64pdfData } = req.body;
+    const { emailFrom, emailTo, message, subject, base64pdfData, pdfTitle } = req.body;
 
     try {
       const { data, status } = await axios.post(
         `${process.env.AWS_API_URL}/send-email`,
-        { emailFrom, emailTo, message, subject, base64pdfData },
+        { emailFrom, emailTo, message, subject, base64pdfData, pdfTitle },
         {
           headers: { 'x-api-key': process.env.AWS_API_KEY || '' },
         },

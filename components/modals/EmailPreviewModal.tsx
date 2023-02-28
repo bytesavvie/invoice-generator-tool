@@ -82,16 +82,23 @@ const EmailPreviewModal: FC<IProps> = ({ showModal, onClose, emailFrom, emailTo,
 
   const sendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const base64Pdf = await renderPDFToString();
+    const base64pdfData = await renderPDFToString();
 
     console.log({
       emailFrom,
       emailTo,
       subject,
       message,
-      base64Pdf,
+      base64pdfData,
     });
+
+    try {
+      const { data } = await axios.post('/api/send-email', { emailFrom, emailTo, subject, message, base64pdfData });
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+
     onClose();
   };
 

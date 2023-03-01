@@ -10,7 +10,7 @@ import axios from 'axios';
 
 // firebase
 import { db } from '../../firebase';
-import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 
 // Types
 import { VerifiedEmailAddressData } from '../../types/customTypes';
@@ -26,6 +26,11 @@ interface GetVerifiedEmailsResponse {
       VerificationStatus: 'Pending' | 'Success';
     };
   };
+}
+
+interface DeleteVerifiedEmailResponse {
+  statusCode: number;
+  message: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | Error>) {
@@ -105,10 +110,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const emailArr: VerifiedEmailAddressData[] = req.body.emails;
     const emailsString = emailArr.map((email) => email.emailAddress).join(',');
 
-    // const verifiedEmailsCollectionRef = collection(db, 'verifiedEmails');
-    // const docRef = doc(db, "cities", "yftq9RGp4jWNSyBZ1D6L");
-    // Success | Pending
-
     try {
       const { data } = await axios.get<GetVerifiedEmailsResponse>(
         `${process.env.AWS_API_URL}/verified-emails?email=${emailsString}`,
@@ -136,7 +137,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   if (req.method === 'DELETE') {
-    console.log(req.body);
-    res.status(200).json({ message: 'email removed' });
+    if (!req?.body?.email || !req.body.id) {
+      res.status(400).json({ message: 'bad request' });
+      return;
+    }
+
+    try {
+      const { data } = await axios.delete<DeleteVerifiedEmailResponse>(`${process.env.AWS_API_URL}/verified-emails`, {
+        headers: { 'x-api-key': process.env.AWS_API_KEY || '' },
+        data: {
+          email: req.body.email,
+        },
+      });
+
+      if (data.statusCode === 200) {
+        const docRef = doc(db, 'verifiedEmails', req.body.id);
+        await deleteDoc(docRef);
+        res.status(200).json(data.message);
+      } else {
+        res.status(data.statusCode).json(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: 'Unable to remove email' });
+    }
   }
 }

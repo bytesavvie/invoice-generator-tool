@@ -55,7 +55,6 @@ const ConfirmModal: FC<IProps> = ({ showModal, onClose, verifiedEmails, setVerif
 
     try {
       const { data } = await axios.post<VerifiedEmailAddressData>('/api/verified-emails', { email });
-      console.log(data);
       const newVerifiedEmailList = [...verifiedEmails, data];
       setVerifiedEmails(newVerifiedEmailList);
       setLoadingText('');

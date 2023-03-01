@@ -25,6 +25,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 // Components
 import ConfirmModal from '../ConfirmModal';
+import LoadingModal from '../LoadingModal';
 
 // Types
 import { VerifiedEmailAddressData } from '../../types/customTypes';
@@ -35,26 +36,32 @@ interface IProps {
 }
 
 const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailList }) => {
-  const [loadingText, setLoadingText] = useState('');
+  const [tableLoadingText, setTableLoadingText] = useState('');
+  const [generalLoadingText, setGeneralLoadingText] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<VerifiedEmailAddressData | null>(null);
 
   const removeVerifiedEmail = async () => {
+    setGeneralLoadingText('Deleting verified email...');
     if (selectedEmail) {
       try {
         const { data } = await axios.delete('/api/verified-emails', {
-          data: { email: selectedEmail },
+          data: { email: selectedEmail.emailAddress, id: selectedEmail.id },
         });
+        const newEmailList = verifiedEmailList.filter((email) => email.id !== selectedEmail.id);
+        setVerifiedEmailList(newEmailList);
         setShowDeleteModal(false);
         console.log(data);
       } catch (err) {
         console.log(err);
       }
     }
+
+    setGeneralLoadingText('');
   };
 
   const updateVerificationStatuses = async () => {
-    setLoadingText('Updating data...');
+    setTableLoadingText('Updating data...');
     try {
       const { data } = await axios.put<VerifiedEmailAddressData[]>('/api/verified-emails', {
         emails: verifiedEmailList,
@@ -63,7 +70,7 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
     } catch (err) {
       console.log(err);
     }
-    setLoadingText('');
+    setTableLoadingText('');
   };
 
   const renderVerificationStatus = (status: 'verified' | 'pending') => {
@@ -82,81 +89,84 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
     );
   };
   return (
-    <TableContainer component={Paper} sx={{ position: 'relative' }}>
-      <ConfirmModal
-        showModal={showDeleteModal}
-        modalTitle="Remove Verified Email?"
-        modalMessage={`Are you sure you want to remove "${selectedEmail?.emailAddress}".`}
-        confirmText="Remove"
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={removeVerifiedEmail}
-      />
+    <>
+      <TableContainer component={Paper} sx={{ position: 'relative' }}>
+        <ConfirmModal
+          showModal={showDeleteModal}
+          modalTitle="Remove Verified Email?"
+          modalMessage={`Are you sure you want to remove "${selectedEmail?.emailAddress}".`}
+          confirmText="Remove"
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={removeVerifiedEmail}
+        />
 
-      {loadingText && (
-        <Box
-          sx={{
-            zIndex: 10,
-            background: 'rgba(10, 10, 10, 0.8)',
-            height: '100%',
-            width: '100%',
-            position: 'absolute',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Box sx={{ textAlign: 'center' }}>
-            <Typography sx={{ mb: '1rem', fontSize: '16px' }}>{loadingText}</Typography>
-            <CircularProgress />
+        {tableLoadingText && (
+          <Box
+            sx={{
+              zIndex: 10,
+              background: 'rgba(10, 10, 10, 0.8)',
+              height: '100%',
+              width: '100%',
+              position: 'absolute',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography sx={{ mb: '1rem', fontSize: '16px' }}>{tableLoadingText}</Typography>
+              <CircularProgress />
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
 
-      <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell>Email</TableCell>
-            <TableCell>
-              Verification Status{' '}
-              <Button variant="outlined" size="small" sx={{ marginLeft: 2 }} onClick={updateVerificationStatuses}>
-                Update
-              </Button>
-            </TableCell>
-            <TableCell align="right"></TableCell>
-            <TableCell align="right"></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {verifiedEmailList.map((email) => {
-            return (
-              <TableRow key={email.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {email.emailAddress}
-                </TableCell>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Email</TableCell>
+              <TableCell>
+                Verification Status{' '}
+                <Button variant="outlined" size="small" sx={{ marginLeft: 2 }} onClick={updateVerificationStatuses}>
+                  Update
+                </Button>
+              </TableCell>
+              <TableCell align="right"></TableCell>
+              <TableCell align="right"></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {verifiedEmailList.map((email) => {
+              return (
+                <TableRow key={email.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell component="th" scope="row">
+                    {email.emailAddress}
+                  </TableCell>
 
-                <TableCell>{renderVerificationStatus(email.verificationStatus)}</TableCell>
+                  <TableCell>{renderVerificationStatus(email.verificationStatus)}</TableCell>
 
-                <TableCell>
-                  <Button variant="outlined" size="small">
-                    Resend Verification Email
-                  </Button>
-                </TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    onClick={() => {
-                      setSelectedEmail(email);
-                      setShowDeleteModal(true);
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                  <TableCell>
+                    <Button variant="outlined" size="small">
+                      Resend Verification Email
+                    </Button>
+                  </TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      onClick={() => {
+                        setSelectedEmail(email);
+                        setShowDeleteModal(true);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {generalLoadingText && <LoadingModal text={generalLoadingText} />}
+    </>
   );
 };
 

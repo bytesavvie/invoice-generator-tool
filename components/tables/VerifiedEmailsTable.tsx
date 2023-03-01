@@ -16,10 +16,15 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
 
 // Icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+// Components
+import ConfirmModal from '../ConfirmModal';
 
 // Types
 import { VerifiedEmailAddressData } from '../../types/customTypes';
@@ -31,6 +36,24 @@ interface IProps {
 
 const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailList }) => {
   const [loadingText, setLoadingText] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState<VerifiedEmailAddressData | null>(null);
+
+  const removeVerifiedEmail = async () => {
+    setLoadingText('Removing verified email');
+    if (selectedEmail) {
+      try {
+        const { data } = await axios.delete('/api/verified-emails', {
+          data: { email: selectedEmail },
+        });
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    setLoadingText('');
+  };
 
   const updateVerificationStatuses = async () => {
     setLoadingText('Updating data...');
@@ -62,6 +85,15 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
   };
   return (
     <TableContainer component={Paper} sx={{ position: 'relative' }}>
+      <ConfirmModal
+        showModal={showDeleteModal}
+        modalTitle="Remove Verified Email?"
+        modalMessage={`Are you sure you want to remove "${selectedEmail?.emailAddress}".`}
+        confirmText="Remove"
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={removeVerifiedEmail}
+      />
+
       {loadingText && (
         <Box
           sx={{
@@ -93,6 +125,7 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
               </Button>
             </TableCell>
             <TableCell align="right"></TableCell>
+            <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -109,6 +142,16 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
                   <Button variant="outlined" size="small">
                     Resend Verification Email
                   </Button>
+                </TableCell>
+                <TableCell align="right">
+                  <IconButton
+                    onClick={() => {
+                      setSelectedEmail(email);
+                      setShowDeleteModal(true);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             );

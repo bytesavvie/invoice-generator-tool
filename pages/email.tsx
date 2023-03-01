@@ -193,7 +193,12 @@ const Email: NextPage = () => {
   return (
     <div>
       <Navbar />
-      <VerifyEmailModal showModal={showVerifyEmailModal} onClose={() => setShowVerifyEmailModal(false)} />
+      <VerifyEmailModal
+        verifiedEmails={verifiedEmailList}
+        showModal={showVerifyEmailModal}
+        onClose={() => setShowVerifyEmailModal(false)}
+        setVerifiedEmails={setVerifiedEmailList}
+      />
       <Container sx={{ paddingTop: '100px', paddingBottom: '100px' }}>
         <Box component="section" sx={{ marginBottom: '2rem' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>

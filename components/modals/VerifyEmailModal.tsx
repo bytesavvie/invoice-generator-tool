@@ -1,5 +1,5 @@
 // React
-import React, { FC, useState } from 'react';
+import React, { FC, useState, Dispatch, SetStateAction } from 'react';
 
 // axios
 import axios from 'axios';
@@ -14,6 +14,9 @@ import Alert from '@mui/material/Alert';
 
 // Components
 import LoadingModal from '../LoadingModal';
+
+// Types
+import { VerifiedEmailAddressData } from '../../types/customTypes';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',
@@ -31,9 +34,11 @@ const modalStyle = {
 interface IProps {
   showModal: boolean;
   onClose: () => void;
+  verifiedEmails: VerifiedEmailAddressData[];
+  setVerifiedEmails: Dispatch<SetStateAction<VerifiedEmailAddressData[]>>;
 }
 
-const ConfirmModal: FC<IProps> = ({ showModal, onClose }) => {
+const ConfirmModal: FC<IProps> = ({ showModal, onClose, verifiedEmails, setVerifiedEmails }) => {
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loadingText, setLoadingText] = useState('');
@@ -49,8 +54,10 @@ const ConfirmModal: FC<IProps> = ({ showModal, onClose }) => {
     setLoadingText('Sending verificaiton email');
 
     try {
-      const { data } = await axios.post('/api/verified-emails', { email });
+      const { data } = await axios.post<VerifiedEmailAddressData>('/api/verified-emails', { email });
       console.log(data);
+      const newVerifiedEmailList = [...verifiedEmails, data];
+      setVerifiedEmails(newVerifiedEmailList);
       setLoadingText('');
       onClose();
     } catch (err) {

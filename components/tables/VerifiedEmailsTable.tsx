@@ -40,19 +40,17 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
   const [selectedEmail, setSelectedEmail] = useState<VerifiedEmailAddressData | null>(null);
 
   const removeVerifiedEmail = async () => {
-    setLoadingText('Removing verified email');
     if (selectedEmail) {
       try {
         const { data } = await axios.delete('/api/verified-emails', {
           data: { email: selectedEmail },
         });
+        setShowDeleteModal(false);
         console.log(data);
       } catch (err) {
         console.log(err);
       }
     }
-
-    setLoadingText('');
   };
 
   const updateVerificationStatuses = async () => {

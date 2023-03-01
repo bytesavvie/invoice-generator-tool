@@ -77,13 +77,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         },
       );
       const verifiedEmailsCollectionRef = collection(db, 'verifiedEmails');
-      const doc = await addDoc(verifiedEmailsCollectionRef, {
+      const docRef = await addDoc(verifiedEmailsCollectionRef, {
         emailAddress: req.body.email,
         verificationStatus: 'pending',
         userId: session.user.id,
       });
-      console.log(data);
-      res.status(status).json({ message: `Verification email sent to ${req.body.email}` });
+      res.status(status).json({ id: docRef.id, verificationStatus: 'pending', emailAddress: req.body.email });
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Unable to verification email.' });
@@ -107,9 +106,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const emailsString = emailArr.map((email) => email.emailAddress).join(',');
 
     // const verifiedEmailsCollectionRef = collection(db, 'verifiedEmails');
-
     // const docRef = doc(db, "cities", "yftq9RGp4jWNSyBZ1D6L");
-
     // Success | Pending
 
     try {
@@ -136,5 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       console.log(err);
       res.status(500).json({ message: 'Unable to get verification statuses.' });
     }
+  }
+
+  if (req.method === 'DELETE') {
+    console.log(req.body);
+    res.status(200).json({ message: 'email removed' });
   }
 }

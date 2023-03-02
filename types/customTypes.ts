@@ -42,3 +42,11 @@ export interface VerifiedEmailAddressData {
   id: string;
   verificationStatus: 'pending' | 'verified';
 }
+
+export interface SentEmail {
+  base64pdfData: string;
+  emailTo: string;
+  id: string;
+  sentAt: string;
+  subject: string;
+}

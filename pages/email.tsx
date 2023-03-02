@@ -37,12 +37,13 @@ import VerifiedEmailsTable from '../components/tables/VerifiedEmailsTable';
 import LoadingModal from '../components/LoadingModal';
 import InvoicePDFTemplate1 from '../pdf/InvoicePDFTemplate1';
 import EmailPreviewModal from '../components/modals/EmailPreviewModal';
+import SentEmailsTable from '../components/tables/SentEmailsTable';
 
 // Context
 import { AppContext } from '../context';
 
 // Types
-import { VerifiedEmailAddressData, Student, PdfData } from '../types/customTypes';
+import { VerifiedEmailAddressData, Student, PdfData, SentEmail } from '../types/customTypes';
 
 const Email: NextPage = () => {
   const { data: session, status } = useSession({ required: true });
@@ -65,6 +66,7 @@ const Email: NextPage = () => {
   const [showVerifyEmailModal, setShowVerifyEmailModal] = useState(false);
   const [verifiedEmailList, setVerifiedEmailList] = useState<VerifiedEmailAddressData[]>([]);
   const [showEmailPreview, setShowEmailPreview] = useState(false);
+  const [sentEmails, setSentEmails] = useState<SentEmail[]>([]);
 
   const [selectedVerifiedEmail, setSelectedVerifiedEmail] = useState<string>('');
   const [emailFrom, setEmailFrom] = useState('');
@@ -132,6 +134,16 @@ const Email: NextPage = () => {
     }
   }, [setStudents]);
 
+  const handleGetSentEmails = useCallback(async () => {
+    try {
+      const { data } = await axios.get<SentEmail[]>('/api/send-email');
+      console.log(data);
+      setSentEmails(data);
+    } catch (err) {
+      console.log(err);
+    }
+  }, [setSentEmails]);
+
   const handleGetVerifiedEmailList = useCallback(async () => {
     setLoadingText('Fetching Data...');
     try {
@@ -148,7 +160,8 @@ const Email: NextPage = () => {
 
   useEffect(() => {
     handleGetVerifiedEmailList();
-  }, [handleGetVerifiedEmailList]);
+    handleGetSentEmails();
+  }, [handleGetVerifiedEmailList, handleGetSentEmails]);
 
   useEffect(() => {
     if (session?.user?.name) {
@@ -218,6 +231,13 @@ const Email: NextPage = () => {
               Click add email to begin the verification process.
             </p>
           )}
+        </Box>
+
+        <Box component="section" sx={{ marginBottom: '2rem' }}>
+          <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '2rem' }}>
+            Sent Emails
+          </Typography>
+          <SentEmailsTable sentEmails={sentEmails} />
         </Box>
 
         <Box component="section" sx={{ marginBottom: '2rem' }}>

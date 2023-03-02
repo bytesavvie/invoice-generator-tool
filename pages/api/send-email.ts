@@ -5,6 +5,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { authOptions } from './auth/[...nextauth]';
 import { unstable_getServerSession } from 'next-auth/next';
 
+// Firebase
+import { db } from '../../firebase';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+
 // Axios
 import axios from 'axios';
 
@@ -51,9 +55,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         },
       );
 
+      const sentEmailsRef = collection(db, 'sentEmails');
+      const expiredDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+      const newEmailData = {
+        emailTo,
+        subject,
+        base64pdfData,
+        userId: session.user.id,
+        sentAt: Timestamp.now(),
+        expiresAt: Timestamp.fromDate(expiredDate),
+      };
+      let docRef = await addDoc(sentEmailsRef, newEmailData);
       console.log('data', data, 'status', status);
 
-      res.status(status).json(data);
+      res.status(status).json({ ...newEmailData, id: docRef.id });
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Unable to send email.' });

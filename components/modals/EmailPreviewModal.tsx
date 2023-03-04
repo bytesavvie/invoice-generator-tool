@@ -1,5 +1,5 @@
 // React
-import React, { FC, useState } from 'react';
+import React, { FC, useState, Dispatch, SetStateAction } from 'react';
 
 // axios
 import axios from 'axios';
@@ -24,7 +24,7 @@ import LoadingModal from '../LoadingModal';
 import { formatPDFTitle } from '../../utils/pdf';
 
 // Types
-import { PdfData } from '../../types/customTypes';
+import { PdfData, Student, SentEmail } from '../../types/customTypes';
 
 const modalStyle = {
   margin: 'auto',
@@ -45,9 +45,23 @@ interface IProps {
   subject: string;
   message: string;
   pdfData: PdfData | null;
+  student: Student | null;
+  sentEmails: SentEmail[];
+  setSentEmails: Dispatch<SetStateAction<SentEmail[]>>;
 }
 
-const EmailPreviewModal: FC<IProps> = ({ showModal, onClose, emailFrom, emailTo, subject, message, pdfData }) => {
+const EmailPreviewModal: FC<IProps> = ({
+  showModal,
+  onClose,
+  emailFrom,
+  emailTo,
+  subject,
+  message,
+  pdfData,
+  student,
+  sentEmails,
+  setSentEmails,
+}) => {
   const [loadingText, setLoadingText] = useState('');
 
   const handleCancel = (e: React.MouseEvent) => {
@@ -92,25 +106,20 @@ const EmailPreviewModal: FC<IProps> = ({ showModal, onClose, emailFrom, emailTo,
     if (pdfData) {
       const base64pdfData = await renderPDFToString();
       const pdfTitle = formatPDFTitle(pdfData.studentName, pdfData.months);
-
-      console.log({
-        emailFrom,
-        emailTo,
-        subject,
-        message,
-        base64pdfData,
-      });
+      const studentName = student?.name || '';
 
       try {
-        const { data } = await axios.post('/api/send-email', {
+        const { data } = await axios.post<SentEmail>('/api/send-email', {
           emailFrom,
           emailTo,
           subject,
           message,
           base64pdfData,
           pdfTitle,
+          studentName,
         });
-        console.log(data);
+
+        setSentEmails((prevState) => [...prevState, data]);
       } catch (err) {
         console.log(err);
       }
@@ -129,7 +138,7 @@ const EmailPreviewModal: FC<IProps> = ({ showModal, onClose, emailFrom, emailTo,
         aria-describedby="modal-modal-description"
         sx={{ overflow: 'auto' }}
       >
-        <form onSubmit={sendEmail}>
+        <Box component="form" onSubmit={sendEmail}>
           <Box sx={modalStyle}>
             <Typography variant="h4" align="center" sx={{ marginBottom: '2rem' }}>
               Email Preview
@@ -166,7 +175,7 @@ const EmailPreviewModal: FC<IProps> = ({ showModal, onClose, emailFrom, emailTo,
               </Button>
             </Box>
           </Box>
-        </form>
+        </Box>
       </Modal>
       {loadingText && <LoadingModal text={loadingText} />}
     </>

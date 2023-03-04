@@ -49,4 +49,5 @@ export interface SentEmail {
   id: string;
   sentAt: string;
   subject: string;
+  studentName: string;
 }

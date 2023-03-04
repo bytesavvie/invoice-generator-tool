@@ -235,9 +235,13 @@ const Email: NextPage = () => {
 
         <Box component="section" sx={{ marginBottom: '2rem' }}>
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '2rem' }}>
-            Sent Emails
+            Sent Emails (Last 30 days)
           </Typography>
-          <SentEmailsTable sentEmails={sentEmails} />
+          {sentEmails.length > 0 ? (
+            <SentEmailsTable sentEmails={sentEmails} />
+          ) : (
+            <Typography variant="body1">No recent emails.</Typography>
+          )}
         </Box>
 
         <Box component="section" sx={{ marginBottom: '2rem' }}>
@@ -365,6 +369,9 @@ const Email: NextPage = () => {
         subject={subject}
         message={message}
         pdfData={pdfData}
+        student={selectedStudent}
+        sentEmails={sentEmails}
+        setSentEmails={setSentEmails}
       />
     </div>
   );

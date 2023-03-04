@@ -23,6 +23,7 @@ const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
       <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
         <TableHead>
           <TableRow>
+            <TableCell>Student</TableCell>
             <TableCell>To</TableCell>
             <TableCell>Sent</TableCell>
             <TableCell>Subject</TableCell>
@@ -33,6 +34,7 @@ const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
           {sentEmails.map((email) => {
             return (
               <TableRow key={email.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell>{email.studentName}</TableCell>
                 <TableCell>{email.emailTo}</TableCell>
                 <TableCell>{email.sentAt}</TableCell>
                 <TableCell>{email.subject}</TableCell>

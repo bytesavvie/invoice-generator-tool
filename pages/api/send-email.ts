@@ -65,7 +65,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       !req.body.message ||
       !req.body.subject ||
       !req.body.base64pdfData ||
-      !req.body.pdfTitle
+      !req.body.pdfTitle ||
+      !req.body.studentName
     ) {
       res.status(400).json({ message: 'bad request' });
       return;
@@ -78,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       return;
     }
 
-    const { emailFrom, emailTo, message, subject, base64pdfData, pdfTitle } = req.body;
+    const { emailFrom, emailTo, message, subject, base64pdfData, pdfTitle, studentName } = req.body;
 
     try {
       const { data, status } = await axios.post(
@@ -94,15 +95,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const newEmailData = {
         emailTo,
         subject,
+        studentName,
         base64pdfData,
         userId: session.user.id,
         sentAt: Timestamp.now(),
         expiresAt: Timestamp.fromDate(expiredDate),
       };
       let docRef = await addDoc(sentEmailsRef, newEmailData);
-      console.log('data', data, 'status', status);
+      console.log(docRef);
 
-      res.status(status).json({ ...newEmailData, id: docRef.id });
+      res
+        .status(status)
+        .json({
+          studentName,
+          emailTo,
+          base64pdfData,
+          subject,
+          sentAt: format(Date.now(), 'MM/dd/yyyy'),
+          id: docRef.id,
+        });
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Unable to send email.' });

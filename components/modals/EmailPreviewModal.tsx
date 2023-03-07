@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 
@@ -63,6 +64,7 @@ const EmailPreviewModal: FC<IProps> = ({
   setSentEmails,
 }) => {
   const [loadingText, setLoadingText] = useState('');
+  const [showEmailSentAlert, setShowEmailSentAlert] = useState(false);
 
   const handleCancel = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -120,6 +122,7 @@ const EmailPreviewModal: FC<IProps> = ({
         });
 
         setSentEmails((prevState) => [...prevState, data]);
+        setShowEmailSentAlert(true);
       } catch (err) {
         console.log(err);
       }
@@ -178,6 +181,11 @@ const EmailPreviewModal: FC<IProps> = ({
         </Box>
       </Modal>
       {loadingText && <LoadingModal text={loadingText} />}
+      <Snackbar open={showEmailSentAlert} autoHideDuration={3000} onClose={() => setShowEmailSentAlert(false)}>
+        <Alert onClose={() => setShowEmailSentAlert(false)} severity="success" variant="filled" sx={{ width: '100%' }}>
+          Email Sent!
+        </Alert>
+      </Snackbar>
     </>
   );
 };

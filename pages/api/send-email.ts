@@ -102,18 +102,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         expiresAt: Timestamp.fromDate(expiredDate),
       };
       let docRef = await addDoc(sentEmailsRef, newEmailData);
-      console.log(docRef);
 
-      res
-        .status(status)
-        .json({
-          studentName,
-          emailTo,
-          base64pdfData,
-          subject,
-          sentAt: format(Date.now(), 'MM/dd/yyyy'),
-          id: docRef.id,
-        });
+      res.status(status).json({
+        studentName,
+        emailTo,
+        base64pdfData,
+        subject,
+        sentAt: format(Date.now(), 'MM/dd/yyyy'),
+        id: docRef.id,
+      });
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Unable to send email.' });

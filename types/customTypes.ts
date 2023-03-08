@@ -46,8 +46,10 @@ export interface VerifiedEmailAddressData {
 export interface SentEmail {
   base64pdfData: string;
   emailTo: string;
+  emailFrom: string;
   id: string;
   sentAt: string;
+  message: string;
   subject: string;
   studentName: string;
 }

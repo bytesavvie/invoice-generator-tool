@@ -23,10 +23,19 @@ interface IProps {
 
 const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
   const [showPdfModal, setShowPdfModal] = useState(false);
-  const [selectedPdfData, setSelectedPdfData] = useState('');
+  const [selectedEmail, setSelectedEmail] = useState<SentEmail>({
+    base64pdfData: '',
+    emailTo: '',
+    emailFrom: '',
+    id: '',
+    sentAt: '',
+    message: '',
+    subject: '',
+    studentName: '',
+  });
 
-  const handleViewPDFClick = (base64pdfData: string) => {
-    setSelectedPdfData(base64pdfData);
+  const handleViewEmailClick = (email: SentEmail) => {
+    setSelectedEmail(email);
     setShowPdfModal(true);
   };
 
@@ -40,7 +49,7 @@ const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
               <TableCell>To</TableCell>
               <TableCell>Sent</TableCell>
               <TableCell>Subject</TableCell>
-              <TableCell>Invoice</TableCell>
+              <TableCell>Email</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -52,8 +61,8 @@ const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
                   <TableCell>{email.sentAt}</TableCell>
                   <TableCell>{email.subject}</TableCell>
                   <TableCell>
-                    <Button size="small" onClick={() => handleViewPDFClick(email.base64pdfData)}>
-                      View Invoice
+                    <Button size="small" onClick={() => handleViewEmailClick(email)}>
+                      View Contents
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -66,7 +75,7 @@ const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
       <InvoiceQuickViewModal
         showModal={showPdfModal}
         onClose={() => setShowPdfModal(false)}
-        selectedBase64PdfData={selectedPdfData}
+        selectedEmail={selectedEmail}
       />
     </>
   );

@@ -93,7 +93,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       const sentEmailsRef = collection(db, 'sentEmails');
       const expiredDate = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
       const newEmailData = {
+        emailFrom,
         emailTo,
+        message,
         subject,
         studentName,
         base64pdfData,
@@ -104,8 +106,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       let docRef = await addDoc(sentEmailsRef, newEmailData);
 
       res.status(status).json({
+        emailFrom,
         studentName,
         emailTo,
+        message,
         base64pdfData,
         subject,
         sentAt: format(Date.now(), 'MM/dd/yyyy'),

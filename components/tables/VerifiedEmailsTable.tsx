@@ -1,5 +1,5 @@
 // React
-import { FC, Dispatch, SetStateAction, useState } from 'react';
+import { FC, Dispatch, SetStateAction, useState, useEffect, useCallback } from 'react';
 
 // axios
 import axios from 'axios';
@@ -17,6 +17,8 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
 
 // Icons
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
@@ -40,6 +42,7 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
   const [generalLoadingText, setGeneralLoadingText] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<VerifiedEmailAddressData | null>(null);
+  const [emailDeleted, setEmailDeleted] = useState(false);
 
   const removeVerifiedEmail = async () => {
     setGeneralLoadingText('Deleting verified email...');
@@ -51,6 +54,7 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
         const newEmailList = verifiedEmailList.filter((email) => email.id !== selectedEmail.id);
         setVerifiedEmailList(newEmailList);
         setShowDeleteModal(false);
+        setEmailDeleted(true);
         console.log(data);
       } catch (err) {
         console.log(err);
@@ -88,6 +92,12 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
       </Box>
     );
   };
+
+  useEffect(() => {
+    updateVerificationStatuses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <TableContainer component={Paper} sx={{ position: 'relative' }}>
@@ -166,6 +176,11 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
         </Table>
       </TableContainer>
       {generalLoadingText && <LoadingModal text={generalLoadingText} />}
+      <Snackbar open={emailDeleted} autoHideDuration={3000} onClose={() => setEmailDeleted(false)}>
+        <Alert onClose={() => setEmailDeleted(false)} severity="success" variant="filled" sx={{ width: '100%' }}>
+          Verified email removed.
+        </Alert>
+      </Snackbar>
     </>
   );
 };

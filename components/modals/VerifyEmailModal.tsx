@@ -64,6 +64,8 @@ const ConfirmModal: FC<IProps> = ({ showModal, onClose, verifiedEmails, setVerif
       setLoadingText('');
       setErrorMessage('Unable to send Verificaiton Email.');
     }
+
+    setEmail('');
   };
 
   return (

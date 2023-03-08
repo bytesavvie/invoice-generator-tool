@@ -141,7 +141,6 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
                 </Button>
               </TableCell>
               <TableCell align="right"></TableCell>
-              <TableCell align="right"></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -151,14 +150,7 @@ const VerifiedEmailsTable: FC<IProps> = ({ verifiedEmailList, setVerifiedEmailLi
                   <TableCell component="th" scope="row">
                     {email.emailAddress}
                   </TableCell>
-
                   <TableCell>{renderVerificationStatus(email.verificationStatus)}</TableCell>
-
-                  <TableCell>
-                    <Button variant="outlined" size="small">
-                      Resend Verification Email
-                    </Button>
-                  </TableCell>
                   <TableCell align="right">
                     <IconButton
                       onClick={() => {

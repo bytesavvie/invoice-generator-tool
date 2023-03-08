@@ -75,6 +75,16 @@ const Email: NextPage = () => {
   const [message, setMessage] = useState('');
   const [pdfData, setPdfData] = useState<PdfData | null>(null);
 
+  const clearForm = () => {
+    setEmailFrom('');
+    setEmailTo('');
+    setSubject('');
+    setMessage('');
+    setPdfData(null);
+    setSelectedStudent(null);
+    setLessonDates(null);
+  };
+
   const createPDFData = useCallback(() => {
     if (!session || !selectedStudent || !lessonDates || !(lessonDates.length > 0)) {
       return;
@@ -235,7 +245,7 @@ const Email: NextPage = () => {
 
         <Box component="section" sx={{ marginBottom: '2rem' }}>
           <Typography variant="h2" sx={{ fontSize: '2rem', marginBottom: '2rem' }}>
-            Sent Emails (Last 30 days)
+            Sent Emails (Last 21 days)
           </Typography>
           {sentEmails.length > 0 ? (
             <SentEmailsTable sentEmails={sentEmails} />
@@ -354,8 +364,11 @@ const Email: NextPage = () => {
                 </>
               )}
             </Grid>
-            <Button variant="contained" type="submit">
+            <Button variant="contained" type="submit" sx={{ marginRight: '2rem' }}>
               Send Email
+            </Button>
+            <Button variant="outlined" type="button" onClick={clearForm}>
+              Clear Form
             </Button>
           </Box>
         </Box>

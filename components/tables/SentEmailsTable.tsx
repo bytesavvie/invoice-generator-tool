@@ -41,8 +41,8 @@ const SentEmailsTable: FC<IProps> = ({ sentEmails }) => {
 
   return (
     <>
-      <TableContainer component={Paper} sx={{ position: 'relative' }}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="small">
+      <TableContainer component={Paper} sx={{ position: 'relative', maxHeight: 450 }}>
+        <Table sx={{ minWidth: 670, overflow: 'auto' }} stickyHeader aria-label="simple table" size="small">
           <TableHead>
             <TableRow>
               <TableCell>Student</TableCell>

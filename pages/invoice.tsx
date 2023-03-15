@@ -8,7 +8,7 @@ import type { NextPage } from 'next';
 // Libraries
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+import { PDFViewer, PDFDownloadLink, pdf } from '@react-pdf/renderer';
 import { debounce } from '@mui/material';
 
 // React Multi Date Picker

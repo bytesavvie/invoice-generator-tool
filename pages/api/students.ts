@@ -79,7 +79,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     let studentId = req.query.id as string;
-    console.log('studentId', studentId);
     const docRef = doc(db, 'students', studentId);
 
     try {

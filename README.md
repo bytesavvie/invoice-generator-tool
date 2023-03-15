@@ -84,18 +84,19 @@ The logic for sending the emails themselves is a lamda that leverages both AWS S
 
 - This page allows you to quickly create invoices. These invoices can be downloaded to be saved for later or sent with an email.
 
-<img src="./readmeImages/invoicePage" alt="Picture of application's invoice page." width="650px" height="350px">
+<img src="./readmeImages/invoicePage.png" alt="Picture of application's invoice page." width="650px" height="350px">
 
 #### Email Page
 
 - This page allows you to send emails from the application. First, register an email you own. Then you can fill out the form at the bottom of this page to begin sending emails with invoices. It's as simple as that.
 
-<img src="./readmeImages/emailPage" alt="Picture of application's emails page." width="650px" height="350px">
+<img src="./readmeImages/emailPage.png" alt="Picture of application's emails page." width="650px" height="350px">
 
 ## Contact
 
-[My Github](https://github.com/Mark-Mulligan) || mark.mulligan.jr1@gmail.com
-[Linkein](https://www.linkedin.com/in/mark-mulligan-50)
+[My Github](https://github.com/Mark-Mulligan) <br>
+mark.mulligan.jr1@gmail.com <br>
+[Linkein](https://www.linkedin.com/in/mark-mulligan-50) <br>
 [Portfolio](https://markmulligan.dev)
 
 #### How to Contact Me

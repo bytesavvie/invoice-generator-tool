@@ -1,5 +1,0 @@
-# pack-refs with: peeled fully-peeled sorted 
-4945cf66dc08ef20d07cc13f6b50df4698171acd refs/heads/master
-df9b09cda5875b0d82a088bda235d6bfa660ff5b refs/heads/old-state
-2c85e3b90ad7bd1ad9cc8a083af2b205c1aedd1f refs/heads/reverting-back-to-working-code
-df9b09cda5875b0d82a088bda235d6bfa660ff5b refs/pull/1/head

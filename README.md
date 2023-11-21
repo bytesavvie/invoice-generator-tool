@@ -94,13 +94,12 @@ The logic for sending the emails themselves is a lamda that leverages both AWS S
 
 ## Contact
 
-[My Github](https://github.com/Mark-Mulligan) <br>
-mark.mulligan.jr1@gmail.com <br>
-[Linkein](https://www.linkedin.com/in/mark-mulligan-50) <br>
-[Portfolio](https://markmulligan.dev)
+[My Github](https://github.com/bytesavvie) <br>
+autonome0802@gmail.com <br>
+[Linkein](https://www.linkedin.com/in/petertian0802) <br>
 
 #### How to Contact Me
 
-Feel free to reach out to me if you have any questions about this project. You can email me using the email listed above or can go to my github page to view my other projects and portfolio.
+Feel free to reach out to me if you have any questions about this project. You can email me using the email listed above or can go to my github page to view my other projects.
 
 © Mark Mulligan 2023 All Rights Reserved.
